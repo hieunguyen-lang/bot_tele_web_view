@@ -132,7 +132,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                 <React.Fragment key={batchId}>
                   <tr className="bg-blue-50">
                     <td colSpan={fields.length + 3} className="px-2 py-2 font-semibold text-blue-800">
-                      Batch ID: {batchId} &nbsp;|&nbsp; Tổng hóa đơn: {hoaDonList.length} &nbsp;|&nbsp; Tổng tiền: {formatCurrency(batchTotal)}
+                      Batch ID: {batchId} &nbsp;|&nbsp; Tổng hóa đơn: {hoaDonList.length} &nbsp;|&nbsp; Tổng kết toán: {formatCurrency(batchTotal)}
                     </td>
                   </tr>
                   {hoaDonList.map((hoaDon: HoaDon, idx: number) => {
