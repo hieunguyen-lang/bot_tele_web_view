@@ -4,7 +4,7 @@
   "description": "Simple dashboard for displaying grouped records",
   "main": "index.js",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --no-open",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
