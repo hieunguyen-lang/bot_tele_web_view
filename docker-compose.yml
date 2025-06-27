@@ -4,11 +4,12 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: react-frontend
-    environment:
-      - VITE_API_URL=http://localhost:8000/api
     ports:
       - "5173:5173"
-    restart: unless-stopped
-    
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000/api
