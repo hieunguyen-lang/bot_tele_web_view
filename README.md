@@ -1,104 +1,72 @@
-# Dashboard Bot
+# Elegant Dashboard
 
-Một dashboard đơn giản để hiển thị danh sách các bản ghi được nhóm theo một trường unique.
+A sophisticated dashboard with an elegant black and white design with accent colors, built with Next.js and React.
 
-## Tính năng
+## Features
 
-- 📊 **Thống kê tổng quan**: Hiển thị số lượng bản ghi, nhóm, bản ghi active/inactive
-- 🔄 **Nhóm linh hoạt**: Có thể nhóm theo category, status, name hoặc ID
-- 📱 **Responsive**: Giao diện tương thích với mọi thiết bị
-- 🎨 **UI hiện đại**: Sử dụng Tailwind CSS với thiết kế đẹp mắt
-- ⚡ **Hiệu suất cao**: Sử dụng React với TypeScript
+- Modern, elegant UI with black and white color scheme with strategic accent colors
+- Responsive dashboard interface
+- Interactive data visualization charts
+- Registration and authentication flow
+- API integration ready
+- Elegant typography and layout
 
-## Cài đặt
+## Tech Stack
 
-1. Clone repository:
+- **Framework**: Next.js with TypeScript
+- **UI**: TailwindCSS for styling
+- **Charts**: Chart.js with react-chartjs-2
+- **Icons**: React Icons (Feather icons)
+- **HTTP Client**: Axios for API calls
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 14.x or later
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
 ```bash
-git clone <repository-url>
-cd dashboard_bot
+git clone https://github.com/yourusername/elegant-dashboard.git
+cd elegant-dashboard
 ```
 
-2. Cài đặt dependencies:
+2. Install dependencies
 ```bash
 npm install
+# or
+yarn install
 ```
 
-3. Chạy ứng dụng:
+3. Start the development server
 ```bash
 npm run dev
+# or
+yarn dev
 ```
 
-4. Mở trình duyệt và truy cập: `http://localhost:3000`
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-## Cấu trúc dự án
+## Project Structure
 
-```
-src/
-├── components/          # React components
-│   ├── Dashboard.tsx           # Component chính
-│   ├── StatsCard.tsx          # Card hiển thị thống kê
-│   ├── RecordCard.tsx         # Card hiển thị bản ghi
-│   └── GroupedRecordsSection.tsx # Section hiển thị nhóm
-├── data/
-│   └── mockData.ts            # Dữ liệu mẫu
-├── types/
-│   └── index.ts              # TypeScript interfaces
-├── utils/
-│   └── groupRecords.ts       # Utility functions
-├── App.tsx                   # Component gốc
-└── main.tsx                  # Entry point
-```
+- `app/` - Main application code
+  - `components/` - Reusable UI components
+  - `pages/` - Application pages
+  - `styles/` - Global styles
+  - `utils/` - Utility functions and API clients
+- `public/` - Static assets
 
-## Sử dụng
+## API Integration
 
-1. **Xem thống kê**: Dashboard hiển thị tổng quan về dữ liệu
-2. **Chọn nhóm**: Sử dụng dropdown để chọn trường nhóm (category, status, name, id)
-3. **Mở rộng nhóm**: Click vào từng nhóm để xem chi tiết các bản ghi
-4. **Xem chi tiết**: Mỗi bản ghi hiển thị đầy đủ thông tin
+The dashboard is set up to connect to APIs. Update the API endpoints in `app/utils/api.ts` to connect to your backend services.
 
-## Công nghệ sử dụng
+## License
 
-- **React 18** - Framework UI
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **Tailwind CSS** - Styling
-- **Lucide React** - Icons
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Tùy chỉnh
+## Screenshot
 
-### Thêm dữ liệu mới
-
-Chỉnh sửa file `src/data/mockData.ts` để thêm bản ghi mới:
-
-```typescript
-export const mockRecords: Record[] = [
-  {
-    id: 'new-id',
-    name: 'New Record',
-    category: 'New Category',
-    status: 'active',
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-    value: 1000,
-    description: 'New record description'
-  },
-  // ... thêm bản ghi khác
-];
-```
-
-### Thêm trường nhóm mới
-
-1. Cập nhật interface `Record` trong `src/types/index.ts`
-2. Thêm option mới vào dropdown trong `src/components/Dashboard.tsx`
-
-## Build cho production
-
-```bash
-npm run build
-```
-
-## Preview build
-
-```bash
-npm run preview
-```
+![Dashboard Preview](public/dashboard-preview.png)
