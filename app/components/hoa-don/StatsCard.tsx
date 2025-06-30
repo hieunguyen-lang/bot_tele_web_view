@@ -1,6 +1,6 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, Users, FolderOpen } from 'lucide-react';
-import { formatCurrency } from '../utils/groupRecords';
+import { formatCurrency } from '../../utils/groupRecords';
 
 interface StatsCardProps {
   title: string;

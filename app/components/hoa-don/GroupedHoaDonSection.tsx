@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, FolderOpen, Calendar, DollarSign } from 'lucide-react';
-import { GroupedHoaDon, HoaDon } from '../types';
+import { GroupedHoaDon, HoaDon } from '../../types/index';
 import HoaDonCard from './HoaDonCard';
-import { formatCurrency } from '../utils/groupRecords';
+import { formatCurrency } from '../../utils/groupRecords';
 
 interface GroupedHoaDonSectionProps {
   groupedHoaDon: GroupedHoaDon;

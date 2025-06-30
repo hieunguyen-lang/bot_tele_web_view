@@ -1,6 +1,6 @@
 import React from 'react';
 import { HoaDon } from '../../types/index';
-import { formatCurrency, formatDate } from '../utils/groupRecords';
+import { formatCurrency, formatDate } from '../../utils/groupRecords';
 
 interface HoaDonCardProps {
   hoaDon: HoaDon;

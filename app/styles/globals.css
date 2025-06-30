@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #000000;
+  --secondary: #FFFFFF;
+  --accent1: #9333EA;
+  --accent2: #0EA5E9;
+  --accent3: #EF4444;
+  --darkgray: #1F2937;
+  --lightgray: #F3F4F6;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #F8F9FA;
+  color: var(--darkgray);
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-accent1 text-white px-4 py-2 rounded-md hover:bg-accent1/90 transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-darkgray border border-darkgray/20 px-4 py-2 rounded-md hover:bg-lightgray transition-all;
+  }
+  
+  .card {
+    @apply bg-white p-6 rounded-lg shadow-md border border-lightgray;
+  }
+  
+  .dashboard-card {
+    @apply bg-white p-4 rounded-xl shadow-md border border-lightgray hover:shadow-lg transition-all;
+  }
+}
+
+.pagination-button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+} 
