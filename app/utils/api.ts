@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL for API calls
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://45.32.104.37::8000';
 const TOKEN_KEY = 'access_token';
 // Create an axios instance with default configuration
 const api = axios.create({
