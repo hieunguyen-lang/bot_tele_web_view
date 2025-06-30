@@ -68,9 +68,9 @@ const Chart = ({ type, data, options, title, className = '' }: ChartProps) => {
   return (
     <div className={`card h-80 ${className}`}>
       {type === 'line' ? (
-        <Line data={data} options={mergedOptions} />
+        <Line data={data as ChartData<'line', any, any>} options={mergedOptions} />
       ) : (
-        <Bar data={data} options={mergedOptions} />
+        <Bar data={data as ChartData<'bar', any, any>} options={mergedOptions} />
       )}
     </div>
   );

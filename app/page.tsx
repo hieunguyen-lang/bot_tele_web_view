@@ -39,7 +39,7 @@ export default function Home() {
   const [tableData, setTableData] = useState<TablePostData[]>([]);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
-  const handleSearch = e => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchNextPage()
   };
