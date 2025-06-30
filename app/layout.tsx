@@ -8,8 +8,8 @@ import { AuthProvider } from './context/AuthContext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SocialTrack',
-  description: 'A sophisticated dashboard with elegant black and white design',
+  title: 'BillManager',
+  description: 'Là hệ thống hỗ trợ quản lý, tổng hợp và tra cứu hóa đơn một cách nhanh chóng và chính xác.',
   icons: {
     icon: '/logo.ico',
   },

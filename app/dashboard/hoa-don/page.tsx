@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../../context/AuthContext'
 import Select from "react-select";
-import HoaDonTable from '@/app/components/hoa-don/HoaDonTable';
+import HoaDonDashboard from '../../components/hoa-don/HoaDonDashboard';
 interface OptionType {
   value: number
   label: string
@@ -90,7 +90,7 @@ export default function Dashboard() {
     // Gọi hàm
   return (
     <DashboardLayout>
-      <HoaDonTable />
+      <HoaDonDashboard />
     </DashboardLayout>
   );
 } 

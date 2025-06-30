@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { HoaDon, HoaDonGroup } from '../../types/index';
-import { formatCurrency } from '../utils/groupRecords';
-import { updateHoaDon, deleteHoaDon } from '../api/hoaDonApi';
+import { formatCurrency } from '../../utils/groupRecords';
+import { updateHoaDon, deleteHoaDon } from '../../api/hoaDonApi';
 
 interface HoaDonTableProps {
   hoaDonGroups: HoaDonGroup[];
@@ -33,7 +33,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
     setEditId(null);
     setEditData({});
   };
-  const handleChange = (field: keyof HoaDon, value: string) => {
+  const handleChange = (field: keyof HoaDon, value: string | boolean) => {
     setEditData(prev => ({ ...prev, [field]: value }));
   };
   const handleSave = async (id: number) => {
@@ -79,12 +79,12 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
     { key: 'so_hoa_don', label: 'SỐ HÓA ĐƠN' },
     { key: 'gio_giao_dich', label: 'GIỜ GIAO DỊCH' },
     { key: 'ten_may_pos', label: 'TÊN POS' },
-    { key: 'phi_pos', label: 'PHÍ POS', type: 'number' },
     { key: 'tien_phi', label: 'PHÍ DV', type: 'number' },
-    { key: 'phi_thu_khach', label: 'PHÍ THU KHÁCH', type: 'number' },
-    { key: 'ck_khach_rut', label: 'CK KHÁCH RÚT', type: 'number' },
-    { key: 'tien_ve_tk_cty', label: 'TIỀN VỀ TK CTY', type: 'number' },
+    { key: 'phi_thu_khach', label: 'PHÍ Dịch VỤ', type: 'number' },
+    { key: 'ck_khach_rut', label: 'CK KHÁCH RÚT'},
     { key: 'tinh_trang', label: 'TÌNH TRẠNG' },
+    { key: 'dia_chi', label: 'ĐỊA CHỈ' },
+    { key: 'stk_khach', label: 'STK KHÁCH' },
     { key: 'lenh_treo', label: 'LỆNH TREO' },
     { key: 'ly_do', label: 'LÝ DO' },
   ];
@@ -144,17 +144,38 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                         {fields.map(f => (
                           <td key={f.key} className="px-2 py-2">
                             {isEditing ? (
-                              <input
-                                className="border rounded px-1 py-0.5 w-full text-xs"
-                                type={f.type || 'text'}
-                                value={editData[f.key] ?? ''}
-                                onChange={e => handleChange(f.key, e.target.value)}
-                                disabled={loadingId === hoaDon.id}
-                              />
+                              f.key === 'tinh_trang' ? (
+                                <div className="flex items-center justify-center">
+                                  <input
+                                    type="checkbox"
+                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                    checked={editData[f.key] === 'true'}
+                                    onChange={e => handleChange(f.key, e.target.checked.toString())}
+                                    disabled={loadingId === hoaDon.id}
+                                  />
+                                </div>
+                              ) : (
+                                <input
+                                  className="border rounded px-1 py-0.5 w-full text-xs"
+                                  type={f.type || 'text'}
+                                  value={editData[f.key] ?? ''}
+                                  onChange={e => handleChange(f.key, e.target.value)}
+                                  disabled={loadingId === hoaDon.id}
+                                />
+                              )
                             ) : f.key === 'tong_so_tien' || f.key === 'tien_phi' || f.key === 'phi_pos' || f.key === 'phi_thu_khach' || f.key === 'ck_khach_rut' || f.key === 'tien_ve_tk_cty' ? (
                               <span className={f.key === 'tong_so_tien' ? 'text-green-700 font-semibold' : f.key === 'tien_phi' ? 'text-red-600' : ''}>
                                 {hoaDon[f.key] ? formatCurrency(Number(hoaDon[f.key])) : ''}
                               </span>
+                            ) : f.key === 'tinh_trang' ? (
+                              <div className="flex items-center justify-center">
+                                <input
+                                  type="checkbox"
+                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                                  checked={hoaDon[f.key] === 'true'}
+                                  disabled
+                                />
+                              </div>
                             ) : (
                               hoaDon[f.key] ?? ''
                             )}

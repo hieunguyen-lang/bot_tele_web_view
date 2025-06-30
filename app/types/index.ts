@@ -99,6 +99,8 @@ export interface HoaDon {
   tinh_trang?: string;
   lenh_treo?: string;
   ly_do?: string;
+  dia_chi?: string;
+  stk_khach?: string;
 }
 
 export interface GroupedHoaDon {

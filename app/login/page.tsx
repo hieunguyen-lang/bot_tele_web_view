@@ -39,7 +39,7 @@ export default function Login() {
         const res = await apiService.login(params);
         
         if (res.status === 200){
-          router.push('/dashboard/facebookgroup/posts')
+          router.push('/dashboard')
 
   
           setSuccess(true)

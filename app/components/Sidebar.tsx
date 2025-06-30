@@ -63,16 +63,14 @@ const Sidebar = () => {
           </div>
           <nav className="mt-4 space-y-1">
             {menuItems.map((item) => {
-            const isActive = pathname === item.path || (item.children?.some(child => pathname === child.path));
+            const isActive = pathname === item.path;
             const isOpen = openSubmenu === item.name;
 
             return (
               <div key={item.name}>
                 <button
                   onClick={() => {
-                    if (item.children) {
-                      setOpenSubmenu(isOpen ? null : item.name);
-                    }
+                    window.location.href = item.path;
                   }}
                   className={`group flex items-center w-full px-3 py-2 text-sm font-medium rounded-md
                     ${isActive ? 'bg-accent1/10 text-accent1' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
@@ -81,39 +79,10 @@ const Sidebar = () => {
                     {item.icon}
                   </span>
                   <span className="flex-1 text-left">{item.name}</span>
-                  {item.children && (
-                    <svg
-                      className={`ml-2 h-4 w-4 transform transition-transform duration-200 ${
-                        isOpen ? 'rotate-90' : ''
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  )}
+                 
                 </button>
 
-                {/* Submenu */}
-                {item.children && isOpen && (
-                  <div className="ml-8 mt-1 space-y-1">
-                    {item.children.map((subItem) => (
-                      <Link
-                        key={subItem.name}
-                        href={subItem.path}
-                        className={`block px-3 py-2 rounded-md text-sm font-medium ${
-                          pathname === subItem.path
-                            ? 'bg-accent1 text-white'
-                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
-                      >
-                        {subItem.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                
               </div>
             );
           })}
