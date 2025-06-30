@@ -33,7 +33,7 @@ export default function Login() {
   
       try {
         const params = {
-              email: email,
+          username: email,
               password: password
             };
         const res = await apiService.login(params);

@@ -61,7 +61,7 @@ export const apiService = {
   delete: (url: string) => api.delete(url),
   
   // Authentication methods
-  login: (credentials: { email: string; password: string }) => 
+  login: (credentials: { username: string; password: string }) => 
     api.post(
       endpoints.login, 
       credentials,
