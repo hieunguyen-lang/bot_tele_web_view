@@ -159,7 +159,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                                 <input
                                   className="border rounded px-1 py-0.5 w-full text-xs"
                                   type={f.type || 'text'}
-                                  value={editData[f.key] ?? ''}
+                                  value={String(editData[f.key] ?? '')}
                                   onChange={e => handleChange(f.key, e.target.value)}
                                   disabled={loadingId === hoaDon.id}
                                 />
@@ -177,11 +177,11 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                                   disabled
                                 />
                               </div>
-                            ) : f.key === 'ten_khach' ? (
-                              <span className="flex items-center gap-1">
-                                {hoaDon[f.key] ?? ''}
-                                {hoaDon.khach_moi && <UserPlus className="w-4 h-4 text-emerald-500" title="Khách mới" />}
-                              </span>
+                                                         ) : f.key === 'ten_khach' ? (
+                               <span className="flex items-center gap-1">
+                                 {hoaDon[f.key] ?? ''}
+                                 {hoaDon.khach_moi && <UserPlus className="w-4 h-4 text-emerald-500" />}
+                               </span>
                             ) : (
                               hoaDon[f.key] ?? ''
                             )}
