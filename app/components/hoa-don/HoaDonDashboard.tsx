@@ -3,7 +3,7 @@ import { Users, FolderOpen, DollarSign, CreditCard } from 'lucide-react';
 import { HoaDonGroup } from '../../types/index';
 import StatsCard from './StatsCard';
 import HoaDonTable from './HoaDonTable';
-import { getHoaDonList } from '../../api/hoaDonApi';
+import { getHoaDonList, getHoaDonStats } from '../../api/hoaDonApi';
 
 interface Filters {
   so_hoa_don: string;
@@ -36,6 +36,16 @@ const HoaDonDashboard: React.FC = () => {
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Function để lấy thống kê tổng hợp
+  const loadStats = async () => {
+    try {
+      const statsData = await getHoaDonStats();
+      setStats(statsData);
+    } catch (error) {
+      console.error('Không thể tải thống kê:', error);
+    }
+  };
+
   const reloadData = async (filterParams?: Filters, pageParam?: number, pageSizeParam?: number) => {
     setLoading(true);
     try {
@@ -49,13 +59,18 @@ const HoaDonDashboard: React.FC = () => {
       params.append('page_size', String(pageSizeParam || pageSize));
       const data = await getHoaDonList(params.toString());
       setHoaDonGroups(data.data);
-      setStats({
-        totalRecords: data.data.reduce((sum: number, g: HoaDonGroup) => sum + g.records.length, 0),
-        totalBatches: data.total,
-        totalAmount: data.data.reduce((sum: number, g: HoaDonGroup) => sum + g.records.reduce((s: number, h: any) => s + parseInt(h.tong_so_tien), 0), 0),
-        totalFee: data.data.reduce((sum: number, g: HoaDonGroup) => sum + g.records.reduce((s: number, h: any) => s + parseInt(h.tien_phi), 0), 0),
-      });
       setTotalPages(Math.ceil(data.total / (pageSizeParam || pageSize)));
+      
+      // Chỉ cập nhật stats từ dữ liệu filter nếu có filter được áp dụng
+      const hasFilters = filterParams && Object.values(filterParams).some(value => value !== '');
+      if (hasFilters) {
+        setStats({
+          totalRecords: data.data.reduce((sum: number, g: HoaDonGroup) => sum + g.records.length, 0),
+          totalBatches: data.total,
+          totalAmount: data.data.reduce((sum: number, g: HoaDonGroup) => sum + g.records.reduce((s: number, h: any) => s + parseInt(h.tong_so_tien), 0), 0),
+          totalFee: data.data.reduce((sum: number, g: HoaDonGroup) => sum + g.records.reduce((s: number, h: any) => s + parseInt(h.tien_phi), 0), 0),
+        });
+      }
     } catch (e) {
       alert('Không thể tải dữ liệu hóa đơn!');
     } finally {
@@ -64,7 +79,17 @@ const HoaDonDashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    // Load thống kê tổng hợp khi component mount
+    loadStats();
     reloadData(filters, page, pageSize);
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    // Chỉ reload data khi filters, page, pageSize thay đổi (không phải lần đầu)
+    if (hoaDonGroups.length > 0) {
+      reloadData(filters, page, pageSize);
+    }
     // eslint-disable-next-line
   }, [filters, page, pageSize]);
 
@@ -85,6 +110,8 @@ const HoaDonDashboard: React.FC = () => {
       ngay_giao_dich: ''
     });
     setPage(1);
+    // Load lại thống kê tổng hợp khi clear filter
+    loadStats();
   };
 
   return (

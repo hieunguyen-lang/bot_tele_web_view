@@ -25,6 +25,15 @@ export const getHoaDonList = async (queryParams?: string) => {
   return response.json();
 };
 
+// Thêm function để lấy thống kê tổng hợp
+export const getHoaDonStats = async () => {
+  const response = await fetch(`${API_URL}/stats`, {
+    credentials: 'include',
+  });
+  if (!response.ok) throw new Error('Lấy thống kê hóa đơn thất bại');
+  return response.json();
+};
+
 export async function updateHoaDon(id: number, data: Partial<HoaDon>): Promise<HoaDon> {
   const res = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',
