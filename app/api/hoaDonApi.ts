@@ -1,6 +1,6 @@
 import { HoaDon } from '../types';
 
-const API_URL = 'http://45.32.104.37:8000/api/hoa-don';
+const API_URL = '/api/hoa-don';
 
 export interface HoaDonGroup {
   batch_id: string;

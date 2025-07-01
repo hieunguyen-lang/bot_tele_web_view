@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base URL for API calls
-const API_BASE_URL = 'http://45.32.104.37:8000';
+const API_BASE_URL = '/api';
 const TOKEN_KEY = 'access_token';
 // Create an axios instance with default configuration
 const api = axios.create({
@@ -31,11 +31,7 @@ export const endpoints = {
   register: '/api/user/create_user',
   logout: '/auth/logout',
   
-  // Dashboard data
-  getpostsStats: '/api/face_book/search_post',
-  getcommentsStats: '/api/face_book/search_comments',
-  getgroups: '/api/face_book/search_group',
-  addgroups: '/api/face_book/add_new_group',
+ 
   
   analyticsData: '/analytics/data',
   performanceMetrics: '/performance/metrics',
@@ -79,39 +75,15 @@ export const apiService = {
   
   logout: () => api.post(endpoints.logout),
   
-  // Dashboard methods
-  getpostsStats: async (params: any) => {
-  const res = await api.post(endpoints.getpostsStats, params, { withCredentials: true });
-  return res.data;
-  },
-  getcommentsStats: async (params: any) => {
-  const res = await api.post(endpoints.getcommentsStats, params, { withCredentials: true });
-  return res.data;
-  },
-  gethoadonStats: async (params: any) => {
-    const res = await api.post('/api/hoa-don/stats', params, { withCredentials: true });
-    return res.data;
-  },
-  getgroups: async (params: any) => {
-  const res = await api.post(endpoints.getgroups, params, { withCredentials: true });
-  return res.data;
-  },
-  addgroups: async (params: any) => {
-  const res = await api.post(endpoints.addgroups, params, { withCredentials: true });
-  return res.data;
-  },
-  getAnalyticsData: (params = {}) => api.get(endpoints.analyticsData, { params }),
-  getPerformanceMetrics: (params = {}) => api.get(endpoints.performanceMetrics, { params }),
-  
+
+
   // User methods
   getUsers: (params = {}) => api.get(endpoints.users, { params }),
   createUser: (userData: any) => api.post(endpoints.users, userData),
   updateUser: (id: string, userData: any) => api.put(`${endpoints.users}/${id}`, userData),
   deleteUser: (id: string) => api.delete(`${endpoints.users}/${id}`),
   
-  // Report methods
-  getReports: (params = {}) => api.get(endpoints.reports, { params }),
-  generateReport: (reportConfig: any) => api.post(endpoints.generateReport, reportConfig),
+
 };
 
 export default apiService; 
