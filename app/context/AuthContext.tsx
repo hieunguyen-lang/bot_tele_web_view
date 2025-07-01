@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const checkLogin = async () => {
       try {
-        const res = await apiService.get('/api/user/me')
+        const res = await apiService.get('user/me')
         if (res.status === 200) {
           setIsLoggedIn(true)
         }
