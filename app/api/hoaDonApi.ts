@@ -12,24 +12,23 @@ export interface HoaDonListResponse {
   data: HoaDonGroup[];
 }
 
-// export async function getHoaDonList(skip = 0, limit = 20): Promise<HoaDonListResponse> {
-//   const res = await fetch(`${API_URL}?skip=${skip}&limit=${limit}`);
-//   if (!res.ok) throw new Error('Lấy danh sách hóa đơn thất bại');
-//   const data = await res.json();
-//   return { total: data.total, data: data.data };
-// }
+
 export const getHoaDonList = async (queryParams?: string) => {
   const url = queryParams 
     ? `${API_URL}/?${queryParams}`
     : API_URL;
     
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    credentials: 'include', // ✅ Thêm dòng này để gửi cookie
+  });
+  if (!response.ok) throw new Error('Lấy danh sách hóa đơn thất bại');
   return response.json();
 };
 
 export async function updateHoaDon(id: number, data: Partial<HoaDon>): Promise<HoaDon> {
   const res = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',
+    credentials: 'include', // ✅
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
@@ -37,17 +36,22 @@ export async function updateHoaDon(id: number, data: Partial<HoaDon>): Promise<H
   return res.json();
 }
 
+
 export async function deleteHoaDon(id: number): Promise<void> {
-  const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE',
+    credentials: 'include', // ✅
+  });
   if (!res.ok) throw new Error('Xóa hóa đơn thất bại');
 }
 
 export async function createHoaDon(data: Partial<HoaDon>): Promise<HoaDon> {
   const res = await fetch(API_URL, {
     method: 'POST',
+    credentials: 'include', // ✅
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error('Tạo hóa đơn thất bại');
   return res.json();
-} 
+}
