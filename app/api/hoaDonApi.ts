@@ -69,3 +69,15 @@ export async function createHoaDon(data: Partial<HoaDon>): Promise<HoaDon> {
   if (!res.ok) throw new Error('Tạo hóa đơn thất bại');
   return res.json();
 }
+
+export const exportHoaDonExcel = async (queryParams?: string) => {
+  const url = queryParams
+    ? `${API_URL}/export-excel?${queryParams}`
+    : `${API_URL}/export-excel`;
+  const response = await fetch(url, {
+    method: 'GET',
+    credentials: 'include',
+  });
+  if (!response.ok) throw new Error('Xuất Excel thất bại');
+  return response.blob();
+};

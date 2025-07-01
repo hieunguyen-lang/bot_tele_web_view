@@ -3,7 +3,7 @@ import { Users, FolderOpen, DollarSign, CreditCard } from 'lucide-react';
 import { HoaDonGroup } from '../../types/index';
 import StatsCard from './StatsCard';
 import HoaDonTable from './HoaDonTable';
-import { getHoaDonList, getHoaDonStats } from '../../api/hoaDonApi';
+import { getHoaDonList, getHoaDonStats,exportHoaDonExcel } from '../../api/hoaDonApi';
 
 interface Filters {
   so_hoa_don: string;
@@ -114,6 +114,26 @@ const HoaDonDashboard: React.FC = () => {
     loadStats();
   };
 
+  const handleExportExcel = async () => {
+    try {
+      const params = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+      const blob = await exportHoaDonExcel(params.toString());
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'hoa_don.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert('Xuất Excel thất bại!');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 w-screen">
       <div className="w-screen px-2 py-8">
@@ -123,6 +143,15 @@ const HoaDonDashboard: React.FC = () => {
           <p className="text-gray-600 mt-2">
             Quản lý và theo dõi hóa đơn giao dịch theo batch
           </p>
+        </div>
+        {/* Nút xuất Excel */}
+        <div className="mb-4 flex justify-end">
+          <button
+            onClick={handleExportExcel}
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+          >
+            Xuất Excel
+          </button>
         </div>
 
         {/* Stats Cards */}
