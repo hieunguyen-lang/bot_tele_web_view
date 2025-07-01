@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { HoaDon, HoaDonGroup } from '../../types/index';
 import { formatCurrency } from '../../utils/groupRecords';
 import { updateHoaDon, deleteHoaDon } from '../../api/hoaDonApi';
+import { UserPlus } from 'lucide-react';
 
 interface HoaDonTableProps {
   hoaDonGroups: HoaDonGroup[];
@@ -68,25 +69,25 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
   const fields: { key: keyof HoaDon; label: string; type?: string }[] = [
     { key: 'ngay_giao_dich', label: 'NGÀY' },
     { key: 'nguoi_gui', label: 'NGƯỜI GỬI' },
-    { key: 'ten_khach', label: 'HỌ VÀ TÊN KHÁCH' },
+    { key: 'ten_khach', label: 'TÊN KHÁCH' },
     { key: 'so_dien_thoai', label: 'SĐT KHÁCH' },
     { key: 'type_dao_rut', label: 'ĐÁO / RÚT' },
     { key: 'tong_so_tien', label: 'SỐ TIỀN', type: 'number' },
     { key: 'ket_toan', label: 'KẾT TOÁN' },
-    { key: 'so_the', label: 'SỐ THẺ ĐÁO / RÚT' },
+    { key: 'so_the', label: 'SỐ THẺ' },
     { key: 'tid', label: 'TID' },
     { key: 'so_lo', label: 'SỐ LÔ' },
     { key: 'so_hoa_don', label: 'SỐ HÓA ĐƠN' },
     { key: 'gio_giao_dich', label: 'GIỜ GIAO DỊCH' },
-    { key: 'ten_may_pos', label: 'TÊN POS' },
+    { key: 'ten_may_pos', label: 'POS' },
     { key: 'tien_phi', label: 'PHÍ DV', type: 'number' },
-    { key: 'phi_thu_khach', label: 'PHÍ Dịch VỤ', type: 'number' },
+    //{ key: 'phi_thu_khach', label: 'PHÍ Dịch VỤ', type: 'number' },
     { key: 'ck_khach_rut', label: 'CK KHÁCH RÚT'},
     { key: 'tinh_trang', label: 'TÌNH TRẠNG' },
     { key: 'dia_chi', label: 'ĐỊA CHỈ' },
     { key: 'stk_khach', label: 'STK KHÁCH' },
     { key: 'lenh_treo', label: 'LỆNH TREO' },
-    { key: 'ly_do', label: 'LÝ DO' },
+    { key: 'ly_do', label: 'LÝ DO' },   
   ];
 
   return (
@@ -116,7 +117,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
           <thead className="bg-gray-100">
             <tr>
               <th className="px-2 py-2">STT</th>
-              <th className="px-2 py-2">Batch ID</th>
+              {/* <th className="px-2 py-2">Batch ID</th> */}
               {fields.map(f => (
                 <th key={f.key} className="px-2 py-2">{f.label}</th>
               ))}
@@ -140,7 +141,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                     return (
                       <tr key={hoaDon.id} className="hover:bg-gray-50">
                         <td className="px-2 py-2 text-center">{(page - 1) * pageSize + batchIdx + 1}.{idx + 1}</td>
-                        <td className="px-2 py-2 text-blue-700 font-semibold">{batchId}</td>
+                        {/* <td className="px-2 py-2 text-blue-700 font-semibold">{batchId}</td> */}
                         {fields.map(f => (
                           <td key={f.key} className="px-2 py-2">
                             {isEditing ? (
@@ -176,6 +177,11 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                                   disabled
                                 />
                               </div>
+                            ) : f.key === 'ten_khach' ? (
+                              <span className="flex items-center gap-1">
+                                {hoaDon[f.key] ?? ''}
+                                {hoaDon.khach_moi && <UserPlus className="w-4 h-4 text-emerald-500" title="Khách mới" />}
+                              </span>
                             ) : (
                               hoaDon[f.key] ?? ''
                             )}

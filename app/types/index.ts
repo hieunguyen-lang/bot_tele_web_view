@@ -101,6 +101,7 @@ export interface HoaDon {
   ly_do?: string;
   dia_chi?: string;
   stk_khach?: string;
+  khach_moi?: boolean;
 }
 
 export interface GroupedHoaDon {
