@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 // Base URL for API calls
-const API_BASE_URL = '/api';
+const API_BASE_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8000"
+    : "/api";
 const TOKEN_KEY = 'access_token';
 // Create an axios instance with default configuration
 const api = axios.create({
@@ -28,7 +31,7 @@ api.interceptors.response.use(
 export const endpoints = {
   // Authentication
   login: '/token',
-  register: '/api/user/create_user',
+  register: '/user/create_user',
   logout: '/auth/logout',
   
  

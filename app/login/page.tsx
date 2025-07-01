@@ -19,77 +19,69 @@ export default function Login() {
   const searchParams = useSearchParams()
   const message = searchParams.get('message') ?? ''
   const [warningMessage, setWarningMessage] = useState('')
-  const { isLoggedIn, loading: authLoading } = useAuth()
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      console.log('Form submit triggered');
-      setFormLoading(true)
-      setError('')
-      setSuccess(false)
-  
-      const form = e.currentTarget
-      const email = (form.elements.namedItem('email') as HTMLInputElement).value
-      const password = (form.elements.namedItem('password') as HTMLInputElement).value
-  
-      try {
-        const params = {
-          username: email,
-              password: password
-            };
-        const res = await apiService.login(params);
-        
-        if (res.status === 200){
-          router.push('/dashboard')
+  const { isLoggedIn, loading: authLoading, refreshAuth } = useAuth()
 
-  
-          setSuccess(true)
-        }
-        
-      } catch (err: any) {
-        console.error('Lỗi:', err.response?.data?.message || err.message)
-        setError(err.response?.data?.message || 'Đăng nhập thất bại')
-        
-      } finally {
-        setFormLoading(false)
-      }
-    }
-  // ✅ Nếu đã đăng nhập, chuyển hướng sang dashboard
   useEffect(() => {
     if (!authLoading && isLoggedIn) {
       router.push('/dashboard')
     }
   }, [authLoading, isLoggedIn])
 
-  
-
-  // ✅ Xử lý hiển thị cảnh báo nếu bị redirect từ trang không có quyền
   useEffect(() => {
     if (message.startsWith('unauthorized')) {
-      setWarningMessage('Vui lòng đăng nhập trước khi truy cập trang này.')
-      const timer = setTimeout(() => setWarningMessage(''), 5000)
-      return () => clearTimeout(timer)
+      setWarningMessage('Vui lòng đăng nhập trước khi truy cập trang này.');
+      const timer = setTimeout(() => setWarningMessage(''), 5000);
+      return () => clearTimeout(timer);
     }
-  }, [message])
+  }, [message]);
+
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {
-        console.log('Clearing error after 5s')
-        setError('')  // Ẩn lỗi sau 5 giây
-      }, 5000) // 5000ms = 5 giây
-
-      return () => clearTimeout(timer) // cleanup nếu component unmount hoặc error thay đổi
+        setError('');
+      }, 5000);
+      return () => clearTimeout(timer);
     }
-  }, [error])
-  // ✅ Khi chưa xác định trạng thái auth, không render
-  if (authLoading) return null
-  
+  }, [error]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFormLoading(true);
+    setError('');
+    setSuccess(false);
+
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+
+    try {
+      const params = { username: email, password: password };
+      const res = await apiService.login(params);
+
+      if (res.status === 200) {
+        setWarningMessage('');
+        setError('');
+        setSuccess(true);
+        await refreshAuth();
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Đăng nhập thất bại');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center text-lg">Đang kiểm tra đăng nhập...</div>;
+  }
+
   return (
     
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-md mx-auto">
-          {warningMessage && (
+          {!isLoggedIn && warningMessage && (
             <div className="mb-6 text-center">
               <div className="inline-block bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md text-sm font-medium">
                 {warningMessage}
@@ -105,7 +97,7 @@ export default function Login() {
           
           <div className="bg-white rounded-lg shadow-lg p-8">
              <>
-              {error && (
+              {!isLoggedIn && error && (
                 <div className="mb-4 text-center">
                   <div className="inline-block bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md text-sm font-medium">
                     {error}

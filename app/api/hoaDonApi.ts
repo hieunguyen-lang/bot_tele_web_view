@@ -1,6 +1,11 @@
 import { HoaDon } from '../types';
 
-const API_URL = '/api/hoa-don';
+const API_BASE_URL =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:8000'
+    : '/api';
+
+const API_URL = `${API_BASE_URL}/hoa-don`;
 
 export interface HoaDonGroup {
   batch_id: string;
