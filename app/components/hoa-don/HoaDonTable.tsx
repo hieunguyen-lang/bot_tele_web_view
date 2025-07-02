@@ -12,14 +12,6 @@ interface HoaDonTableProps {
 const PAGE_SIZE_OPTIONS = [2, 5, 10, 20]; // Số batch/trang
 
 const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => {
-  // Pagination state (theo batch)
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const totalPages = Math.ceil(hoaDonGroups.length / pageSize);
-
-  // Lấy batch cho trang hiện tại
-  const pagedGroups = hoaDonGroups.slice((page - 1) * pageSize, page * pageSize);
-
   // Inline edit state
   const [editId, setEditId] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<HoaDon>>({});
@@ -86,7 +78,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
     { key: 'tinh_trang', label: 'TÌNH TRẠNG' },
     { key: 'dia_chi', label: 'ĐỊA CHỈ' },
     { key: 'stk_khach', label: 'STK KHÁCH' },
-    { key: 'lenh_treo', label: 'LỆNH TREO' },
+    { key: 'caption_goc', label: 'NOTE GỐC' },
     { key: 'ly_do', label: 'LÝ DO' },   
   ];
 
@@ -100,10 +92,10 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
           <span className="text-sm">Số batch/trang:</span>
           <select
             className="border rounded px-2 py-1 text-sm"
-            value={pageSize}
+            value={PAGE_SIZE_OPTIONS[0]}
             onChange={e => {
-              setPageSize(Number(e.target.value));
-              setPage(1);
+              // setPageSize(Number(e.target.value));
+              // setPage(1);
             }}
           >
             {PAGE_SIZE_OPTIONS.map(opt => (
@@ -117,7 +109,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
           <thead className="bg-gray-100">
             <tr>
               <th className="px-2 py-2">STT</th>
-              {/* <th className="px-2 py-2">Batch ID</th> */}
+              
               {fields.map(f => (
                 <th key={f.key} className="px-2 py-2">{f.label}</th>
               ))}
@@ -125,7 +117,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {pagedGroups.map((group: HoaDonGroup, batchIdx: number) => {
+            {hoaDonGroups.map((group: HoaDonGroup, batchIdx: number) => {
               const hoaDonList = group.records;
               const batchId = group.batch_id;
               const batchTotal = hoaDonList.reduce((sum: number, h: HoaDon) => sum + parseInt(h.tong_so_tien), 0);
@@ -140,8 +132,8 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                     const isEditing = editId === hoaDon.id;
                     return (
                       <tr key={hoaDon.id} className="hover:bg-gray-50">
-                        <td className="px-2 py-2 text-center">{(page - 1) * pageSize + batchIdx + 1}.{idx + 1}</td>
-                        {/* <td className="px-2 py-2 text-blue-700 font-semibold">{batchId}</td> */}
+                        <td className="px-2 py-2 text-center">{batchIdx + 1}.{idx + 1}</td>
+                        
                         {fields.map(f => (
                           <td key={f.key} className="px-2 py-2">
                             {isEditing ? (
@@ -164,6 +156,10 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                                   disabled={loadingId === hoaDon.id}
                                 />
                               )
+                            ) : f.key === 'so_the' ? (
+                              hoaDon[f.key]
+                                ? '**** ' + hoaDon[f.key].slice(-4)
+                                : ''
                             ) : f.key === 'tong_so_tien' || f.key === 'tien_phi' || f.key === 'phi_pos' || f.key === 'phi_thu_khach' || f.key === 'ck_khach_rut' || f.key === 'tien_ve_tk_cty' ? (
                               <span className={f.key === 'tong_so_tien' ? 'text-green-700 font-semibold' : f.key === 'tien_phi' ? 'text-red-600' : ''}>
                                 {hoaDon[f.key] ? formatCurrency(Number(hoaDon[f.key])) : ''}
@@ -177,11 +173,11 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                                   disabled
                                 />
                               </div>
-                                                         ) : f.key === 'ten_khach' ? (
-                               <span className="flex items-center gap-1">
-                                 {hoaDon[f.key] ?? ''}
-                                 {hoaDon.khach_moi && <UserPlus className="w-4 h-4 text-emerald-500" />}
-                               </span>
+                            ) : f.key === 'ten_khach' ? (
+                              <span className="flex items-center gap-1">
+                                {hoaDon[f.key] ?? ''}
+                                {hoaDon.khach_moi && <UserPlus className="w-4 h-4 text-emerald-500" />}
+                              </span>
                             ) : (
                               hoaDon[f.key] ?? ''
                             )}
@@ -232,27 +228,6 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
             })}
           </tbody>
         </table>
-      </div>
-      <div className="flex justify-between items-center mt-4">
-        <div className="text-sm text-gray-600">
-          Trang <b>{page}</b> / <b>{totalPages}</b>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            className="px-2 py-1 border rounded disabled:opacity-50"
-            onClick={() => setPage(page - 1)}
-            disabled={page === 1}
-          >
-            Trước
-          </button>
-          <button
-            className="px-2 py-1 border rounded disabled:opacity-50"
-            onClick={() => setPage(page + 1)}
-            disabled={page === totalPages}
-          >
-            Sau
-          </button>
-        </div>
       </div>
     </div>
   );

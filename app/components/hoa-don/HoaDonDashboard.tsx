@@ -86,10 +86,7 @@ const HoaDonDashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Chỉ reload data khi filters, page, pageSize thay đổi (không phải lần đầu)
-    if (hoaDonGroups.length > 0) {
-      reloadData(filters, page, pageSize);
-    }
+    reloadData(filters, page, pageSize);
     // eslint-disable-next-line
   }, [filters, page, pageSize]);
 
@@ -120,6 +117,7 @@ const HoaDonDashboard: React.FC = () => {
       Object.entries(filters).forEach(([key, value]) => {
         if (value) params.append(key, value);
       });
+      // KHÔNG truyền page và page_size
       const blob = await exportHoaDonExcel(params.toString());
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -295,7 +293,7 @@ const HoaDonDashboard: React.FC = () => {
               hoaDonGroups={hoaDonGroups} 
               onReload={() => reloadData(filters, page, pageSize)} 
             />
-            {/* Pagination UI */}
+            {/* Pagination UI chuyển lên Dashboard */}
             <div className="flex items-center justify-between mt-6">
               <div className="flex items-center gap-2">
                 <span className="text-sm">Trang:</span>
