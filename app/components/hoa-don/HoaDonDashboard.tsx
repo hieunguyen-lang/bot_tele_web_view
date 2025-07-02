@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, FolderOpen, DollarSign, CreditCard } from 'lucide-react';
-import { HoaDonGroup } from '../../types/index';
+import { HoaDonGroup, HoaDon } from '../../types/index';
 import StatsCard from './StatsCard';
 import HoaDonTable from './HoaDonTable';
 import { getHoaDonList, getHoaDonStats,exportHoaDonExcel } from '../../api/hoaDonApi';
@@ -17,6 +17,31 @@ interface Filters {
 }
 
 const PAGE_SIZE_OPTIONS = [50, 100, 200, 500];
+
+// Định nghĩa fields ở đầu file
+const fields: { key: keyof HoaDon; label: string; type?: string }[] = [
+  { key: 'ngay_giao_dich', label: 'NGÀY' },
+  { key: 'nguoi_gui', label: 'NGƯỜI GỬI' },
+  { key: 'ten_khach', label: 'TÊN KHÁCH' },
+  { key: 'so_dien_thoai', label: 'SĐT KHÁCH' },
+  { key: 'type_dao_rut', label: 'ĐÁO / RÚT' },
+  { key: 'tong_so_tien', label: 'SỐ TIỀN', type: 'number' },
+  { key: 'ket_toan', label: 'KẾT TOÁN' },
+  { key: 'so_the', label: 'SỐ THẺ' },
+  { key: 'tid', label: 'TID' },
+  { key: 'so_lo', label: 'SỐ LÔ' },
+  { key: 'so_hoa_don', label: 'SỐ HÓA ĐƠN' },
+  { key: 'gio_giao_dich', label: 'GIỜ GIAO DỊCH' },
+  { key: 'ten_may_pos', label: 'POS' },
+  { key: 'tien_phi', label: 'PHÍ DV', type: 'number' },
+  { key: 'phan_tram_phi', label: 'Phí %' },
+  { key: 'ck_khach_rut', label: 'CK KHÁCH RÚT'},
+  { key: 'tinh_trang', label: 'TÌNH TRẠNG' },
+  { key: 'dia_chi', label: 'ĐỊA CHỈ' },
+  { key: 'stk_khach', label: 'STK KHÁCH' },
+  { key: 'caption_goc', label: 'NOTE GỐC' },
+  { key: 'ly_do', label: 'LÝ DO' },   
+];
 
 const HoaDonDashboard: React.FC = () => {
   const [hoaDonGroups, setHoaDonGroups] = useState<HoaDonGroup[]>([]);
@@ -35,6 +60,9 @@ const HoaDonDashboard: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [visibleFields, setVisibleFields] = useState<(keyof HoaDon)[]>(fields.map(f => f.key as keyof HoaDon));
+  const [showStats, setShowStats] = useState(true);
+  const [showFilters, setShowFilters] = useState(true);
 
   // Function để lấy thống kê tổng hợp
   const loadStats = async () => {
@@ -133,8 +161,8 @@ const HoaDonDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 w-screen">
-      <div className="w-screen px-2 py-8">
+    <div className="min-h-screen bg-gray-50 w-full">
+      <div className="w-full px-2 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Dashboard Hóa Đơn</h1>
@@ -143,16 +171,29 @@ const HoaDonDashboard: React.FC = () => {
           </p>
         </div>
         {/* Nút xuất Excel */}
-        <div className="mb-4 flex justify-end">
+        <div className="mb-4 flex justify-end gap-2">
           <button
             onClick={handleExportExcel}
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
           >
             Xuất Excel
           </button>
+          <button
+            onClick={() => setShowStats(s => !s)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            {showStats ? 'Ẩn Thống kê' : 'Hiện Thống kê'}
+          </button>
+          <button
+            onClick={() => setShowFilters(f => !f)}
+            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+          >
+            {showFilters ? 'Ẩn Bộ lọc' : 'Hiện Bộ lọc'}
+          </button>
         </div>
 
         {/* Stats Cards */}
+        {showStats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatsCard
             title="Tổng Hóa Đơn"
@@ -181,8 +222,10 @@ const HoaDonDashboard: React.FC = () => {
             isCurrency={true}
           />
         </div>
+        )}
 
         {/* Filters */}
+        {showFilters && (
         <div className="bg-white p-4 rounded-lg shadow mb-6">
           <h3 className="text-lg font-semibold mb-4">Bộ lọc</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -283,15 +326,36 @@ const HoaDonDashboard: React.FC = () => {
             </button>
           </div>
         </div>
+        )}
 
-        {/* Table hóa đơn dạng group by batch_id */}
+        {/* Chọn trường hiển thị */}
+        <div className="flex flex-wrap gap-2 mb-2">
+          {fields.map(f => (
+            <label key={f.key as string} className="inline-flex items-center gap-1 text-xs whitespace-nowrap px-2 py-1 bg-gray-100 rounded border border-gray-200">
+              <input
+                type="checkbox"
+                checked={visibleFields.includes(f.key)}
+                onChange={() => {
+                  setVisibleFields(prev =>
+                    prev.includes(f.key)
+                      ? prev.filter(k => k !== f.key)
+                      : [...prev, f.key]
+                  );
+                }}
+              />
+              {f.label}
+            </label>
+          ))}
+        </div>
         {loading ? (
           <div className="text-center text-gray-500 py-10 text-lg">Đang tải dữ liệu...</div>
         ) : (
           <>
             <HoaDonTable 
-              hoaDonGroups={hoaDonGroups} 
-              onReload={() => reloadData(filters, page, pageSize)} 
+              hoaDonGroups={hoaDonGroups}
+              onReload={() => reloadData(filters, page, pageSize)}
+              fields={fields}
+              visibleFields={visibleFields}
             />
             {/* Pagination UI chuyển lên Dashboard */}
             <div className="flex items-center justify-between mt-6">

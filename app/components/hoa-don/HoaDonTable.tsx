@@ -7,11 +7,13 @@ import { UserPlus } from 'lucide-react';
 interface HoaDonTableProps {
   hoaDonGroups: HoaDonGroup[];
   onReload: () => void;
+  fields: { key: keyof HoaDon; label: string; type?: string }[];
+  visibleFields: (keyof HoaDon)[];
 }
 
 const PAGE_SIZE_OPTIONS = [2, 5, 10, 20]; // Số batch/trang
 
-const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => {
+const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, fields, visibleFields }) => {
   // Inline edit state
   const [editId, setEditId] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<HoaDon>>({});
@@ -57,31 +59,6 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
     }
   };
 
-  // List các trường cần hiển thị/sửa
-  const fields: { key: keyof HoaDon; label: string; type?: string }[] = [
-    { key: 'ngay_giao_dich', label: 'NGÀY' },
-    { key: 'nguoi_gui', label: 'NGƯỜI GỬI' },
-    { key: 'ten_khach', label: 'TÊN KHÁCH' },
-    { key: 'so_dien_thoai', label: 'SĐT KHÁCH' },
-    { key: 'type_dao_rut', label: 'ĐÁO / RÚT' },
-    { key: 'tong_so_tien', label: 'SỐ TIỀN', type: 'number' },
-    { key: 'ket_toan', label: 'KẾT TOÁN' },
-    { key: 'so_the', label: 'SỐ THẺ' },
-    { key: 'tid', label: 'TID' },
-    { key: 'so_lo', label: 'SỐ LÔ' },
-    { key: 'so_hoa_don', label: 'SỐ HÓA ĐƠN' },
-    { key: 'gio_giao_dich', label: 'GIỜ GIAO DỊCH' },
-    { key: 'ten_may_pos', label: 'POS' },
-    { key: 'tien_phi', label: 'PHÍ DV', type: 'number' },
-    { key: 'phan_tram_phi', label: 'Phí %' },
-    { key: 'ck_khach_rut', label: 'CK KHÁCH RÚT'},
-    { key: 'tinh_trang', label: 'TÌNH TRẠNG' },
-    { key: 'dia_chi', label: 'ĐỊA CHỈ' },
-    { key: 'stk_khach', label: 'STK KHÁCH' },
-    { key: 'caption_goc', label: 'NOTE GỐC' },
-    { key: 'ly_do', label: 'LÝ DO' },   
-  ];
-
   return (
     <div className="w-full">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-2">
@@ -110,7 +87,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
             <tr>
               <th className="px-2 py-2">STT</th>
               
-              {fields.map(f => (
+              {fields.filter(f => visibleFields.includes(f.key)).map(f => (
                 <th key={f.key} className="px-2 py-2">{f.label}</th>
               ))}
               <th className="px-2 py-2">Thao tác</th>
@@ -134,7 +111,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
                       <tr key={hoaDon.id} className="hover:bg-gray-50">
                         <td className="px-2 py-2 text-center">{batchIdx + 1}.{idx + 1}</td>
                         
-                        {fields.map(f => (
+                        {fields.filter(f => visibleFields.includes(f.key)).map(f => (
                           <td key={f.key} className="px-2 py-2">
                             {isEditing ? (
                               f.key === 'tinh_trang' ? (
