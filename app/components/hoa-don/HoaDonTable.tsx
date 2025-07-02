@@ -73,7 +73,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload }) => 
     { key: 'gio_giao_dich', label: 'GIỜ GIAO DỊCH' },
     { key: 'ten_may_pos', label: 'POS' },
     { key: 'tien_phi', label: 'PHÍ DV', type: 'number' },
-    //{ key: 'phi_thu_khach', label: 'PHÍ Dịch VỤ', type: 'number' },
+    { key: 'phan_tram_phi', label: 'Phí %' },
     { key: 'ck_khach_rut', label: 'CK KHÁCH RÚT'},
     { key: 'tinh_trang', label: 'TÌNH TRẠNG' },
     { key: 'dia_chi', label: 'ĐỊA CHỈ' },
