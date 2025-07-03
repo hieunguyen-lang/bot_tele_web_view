@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { HoaDon, HoaDonGroup } from '../../types/index';
 import { formatCurrency } from '../../utils/groupRecords';
 import { updateHoaDon, deleteHoaDon } from '../../api/hoaDonApi';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, X } from 'lucide-react';
 
 interface HoaDonTableProps {
   hoaDonGroups: HoaDonGroup[];
@@ -14,27 +14,35 @@ interface HoaDonTableProps {
 const PAGE_SIZE_OPTIONS = [2, 5, 10, 20]; // Số batch/trang
 
 const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, fields, visibleFields }) => {
-  // Inline edit state
-  const [editId, setEditId] = useState<number | null>(null);
+  // Modal edit state
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [editData, setEditData] = useState<Partial<HoaDon>>({});
-  const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Handle edit
   const handleEdit = (hoaDon: HoaDon) => {
     setEditId(hoaDon.id);
     setEditData({ ...hoaDon });
+    setEditModalOpen(true);
   };
+
   const handleCancel = () => {
+    setEditModalOpen(false);
     setEditId(null);
     setEditData({});
   };
+
   const handleChange = (field: keyof HoaDon, value: string | boolean) => {
     setEditData(prev => ({ ...prev, [field]: value }));
   };
-  const handleSave = async (id: number) => {
-    setLoadingId(id);
+
+  const handleSave = async () => {
+    if (!editId) return;
+    setLoading(true);
     try {
-      await updateHoaDon(id, editData);
+      await updateHoaDon(editId, editData);
+      setEditModalOpen(false);
       setEditId(null);
       setEditData({});
       onReload();
@@ -42,20 +50,18 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
     } catch (e) {
       alert('Cập nhật thất bại!');
     } finally {
-      setLoadingId(null);
+      setLoading(false);
     }
   };
+
   const handleDelete = async (id: number) => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')) return;
-    setLoadingId(id);
     try {
       await deleteHoaDon(id);
       onReload();
       alert('Đã xóa thành công!');
     } catch (e) {
       alert('Xóa thất bại!');
-    } finally {
-      setLoadingId(null);
     }
   };
 
@@ -86,7 +92,6 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
           <thead className="bg-gray-100">
             <tr>
               <th className="px-2 py-2">STT</th>
-              
               {fields.filter(f => visibleFields.includes(f.key)).map(f => (
                 <th key={f.key} className="px-2 py-2">{f.label}</th>
               ))}
@@ -101,111 +106,157 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
               return (
                 <React.Fragment key={batchId}>
                   <tr className="bg-blue-50">
-                    <td colSpan={fields.length + 3} className="px-2 py-2 font-semibold text-blue-800">
+                    <td colSpan={fields.length + 2} className="px-2 py-2 font-semibold text-blue-800">
                       Batch ID: {batchId} &nbsp;|&nbsp; Tổng hóa đơn: {hoaDonList.length} &nbsp;|&nbsp; Tổng kết toán: {formatCurrency(batchTotal)}
                     </td>
                   </tr>
-                  {hoaDonList.map((hoaDon: HoaDon, idx: number) => {
-                    const isEditing = editId === hoaDon.id;
-                    return (
-                      <tr key={hoaDon.id} className="hover:bg-gray-50">
-                        <td className="px-2 py-2 text-center">{batchIdx + 1}.{idx + 1}</td>
-                        
-                        {fields.filter(f => visibleFields.includes(f.key)).map(f => (
-                          <td key={f.key} className="px-2 py-2">
-                            {isEditing ? (
-                              f.key === 'tinh_trang' ? (
-                                <div className="flex items-center justify-center">
-                                  <input
-                                    type="checkbox"
-                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                    checked={editData[f.key] === 'true'}
-                                    onChange={e => handleChange(f.key, e.target.checked.toString())}
-                                    disabled={loadingId === hoaDon.id}
-                                  />
-                                </div>
-                              ) : (
-                                <input
-                                  className="border rounded px-1 py-0.5 w-full text-xs"
-                                  type={f.type || 'text'}
-                                  value={String(editData[f.key] ?? '')}
-                                  onChange={e => handleChange(f.key, e.target.value)}
-                                  disabled={loadingId === hoaDon.id}
-                                />
-                              )
-                            ) : f.key === 'so_the' ? (
-                              hoaDon[f.key]
-                                ? '**** ' + hoaDon[f.key].slice(-4)
-                                : ''
-                            ) : f.key === 'tong_so_tien' || f.key === 'tien_phi' || f.key === 'phi_pos' || f.key === 'phi_thu_khach' || f.key === 'ck_khach_rut' || f.key === 'tien_ve_tk_cty' ? (
-                              <span className={f.key === 'tong_so_tien' ? 'text-green-700 font-semibold' : f.key === 'tien_phi' ? 'text-red-600' : ''}>
-                                {hoaDon[f.key] ? formatCurrency(Number(hoaDon[f.key])) : ''}
-                              </span>
-                            ) : f.key === 'tinh_trang' ? (
-                              <div className="flex items-center justify-center">
-                                <input
-                                  type="checkbox"
-                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
-                                  checked={hoaDon[f.key] === 'true'}
-                                  disabled
-                                />
-                              </div>
-                            ) : f.key === 'ten_khach' ? (
-                              <span className="flex items-center gap-1">
-                                {hoaDon[f.key] ?? ''}
-                                {hoaDon.khach_moi && <UserPlus className="w-4 h-4 text-emerald-500" />}
-                              </span>
-                            ) : (
-                              hoaDon[f.key] ?? ''
-                            )}
-                          </td>
-                        ))}
-                        <td className="px-2 py-2 min-w-[120px]">
-                          {isEditing ? (
-                            <>
-                              <button
-                                className="px-2 py-1 bg-green-500 text-white rounded mr-2 text-xs"
-                                onClick={() => handleSave(hoaDon.id)}
-                                disabled={loadingId === hoaDon.id}
-                              >
-                                {loadingId === hoaDon.id ? 'Đang lưu...' : 'Lưu'}
-                              </button>
-                              <button
-                                className="px-2 py-1 bg-gray-300 text-gray-800 rounded text-xs"
-                                onClick={handleCancel}
-                                disabled={loadingId === hoaDon.id}
-                              >
-                                Hủy
-                              </button>
-                            </>
+                  {hoaDonList.map((hoaDon: HoaDon, idx: number) => (
+                    <tr key={hoaDon.id} className="hover:bg-gray-50">
+                      <td className="px-2 py-2 text-center">{batchIdx + 1}.{idx + 1}</td>
+                      {fields.filter(f => visibleFields.includes(f.key)).map(f => (
+                        <td key={f.key} className="px-2 py-2">
+                          {f.key === 'so_the' ? (
+                            hoaDon[f.key]
+                              ? '**** ' + hoaDon[f.key].slice(-4)
+                              : ''
+                          ) : f.key === 'tong_so_tien' || f.key === 'tien_phi' || f.key === 'phi_pos' || f.key === 'phi_thu_khach' || f.key === 'ck_khach_rut' || f.key === 'tien_ve_tk_cty' ? (
+                            <span className={f.key === 'tong_so_tien' ? 'text-green-700 font-semibold' : f.key === 'tien_phi' ? 'text-red-600' : ''}>
+                              {hoaDon[f.key] ? formatCurrency(Number(hoaDon[f.key])) : ''}
+                            </span>
+                          ) : f.key === 'tinh_trang' ? (
+                            <div className="flex items-center justify-center">
+                              <input
+                                type="checkbox"
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+                                checked={hoaDon[f.key] === 'true'}
+                                disabled
+                              />
+                            </div>
+                          ) : f.key === 'ten_khach' ? (
+                            <span className="flex items-center gap-1">
+                              {hoaDon[f.key] ?? ''}
+                              {hoaDon.khach_moi && <UserPlus className="w-4 h-4 text-emerald-500" />}
+                            </span>
                           ) : (
-                            <>
-                              <button
-                                className="px-2 py-1 bg-blue-500 text-white rounded mr-2 text-xs"
-                                onClick={() => handleEdit(hoaDon)}
-                                disabled={loadingId !== null}
-                              >
-                                Sửa
-                              </button>
-                              <button
-                                className="px-2 py-1 bg-red-500 text-white rounded text-xs"
-                                onClick={() => handleDelete(hoaDon.id)}
-                                disabled={loadingId !== null}
-                              >
-                                Xóa
-                              </button>
-                            </>
+                            hoaDon[f.key] ?? ''
                           )}
                         </td>
-                      </tr>
-                    );
-                  })}
+                      ))}
+                      <td className="px-2 py-2 min-w-[120px]">
+                        <button
+                          className="px-2 py-1 bg-blue-500 text-white rounded mr-2 text-xs"
+                          onClick={() => handleEdit(hoaDon)}
+                          disabled={loading}
+                        >
+                          Sửa
+                        </button>
+                        <button
+                          className="px-2 py-1 bg-red-500 text-white rounded text-xs"
+                          onClick={() => handleDelete(hoaDon.id)}
+                          disabled={loading}
+                        >
+                          Xóa
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 </React.Fragment>
               );
             })}
           </tbody>
         </table>
       </div>
+
+      {/* Edit Modal */}
+      {editModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Sửa Hóa Đơn</h2>
+              <button
+                onClick={handleCancel}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {fields.map(f => (
+                <div key={f.key as string} className="space-y-1">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {f.label}
+                  </label>
+                  {f.key === 'tinh_trang' ? (
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        checked={editData[f.key] === 'true'}
+                        onChange={e => handleChange(f.key, e.target.checked.toString())}
+                        disabled={loading}
+                      />
+                      <span className="ml-2 text-sm text-gray-600">Đã xử lý</span>
+                    </div>
+                  ) : f.key === 'tong_so_tien' || f.key === 'tien_phi' || f.key === 'phi_pos' || f.key === 'phi_thu_khach' || f.key === 'ck_khach_rut' || f.key === 'tien_ve_tk_cty' ? (
+                    <input
+                      type="number"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={editData[f.key] ?? ''}
+                      onChange={e => handleChange(f.key, e.target.value)}
+                      disabled={loading}
+                      placeholder={`Nhập ${f.label.toLowerCase()}`}
+                    />
+                  ) : f.key === 'ngay_giao_dich' ? (
+                    <input
+                      type="date"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={editData[f.key] ?? ''}
+                      onChange={e => handleChange(f.key, e.target.value)}
+                      disabled={loading}
+                    />
+                  ) : f.key === 'caption_goc' || f.key === 'ly_do' ? (
+                    <textarea
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={3}
+                      value={editData[f.key] ?? ''}
+                      onChange={e => handleChange(f.key, e.target.value)}
+                      disabled={loading}
+                      placeholder={`Nhập ${f.label.toLowerCase()}`}
+                    />
+                  ) : (
+                    <input
+                      type={f.type || 'text'}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={editData[f.key] ?? ''}
+                      onChange={e => handleChange(f.key, e.target.value)}
+                      disabled={loading}
+                      placeholder={`Nhập ${f.label.toLowerCase()}`}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end gap-2 mt-6">
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+                disabled={loading}
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                disabled={loading}
+              >
+                {loading ? 'Đang lưu...' : 'Lưu'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
