@@ -60,7 +60,11 @@ const HoaDonDashboard: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
-  const [visibleFields, setVisibleFields] = useState<(keyof HoaDon)[]>(fields.map(f => f.key as keyof HoaDon));
+  const [visibleFields, setVisibleFields] = useState<(keyof HoaDon)[]>(
+    fields.map(f => f.key as keyof HoaDon).filter(key => 
+      key !== 'ten_khach' && key !== 'so_dien_thoai' && key !== 'nguoi_gui'
+    )
+  );
   const [showStats, setShowStats] = useState(true);
   const [showFilters, setShowFilters] = useState(true);
 

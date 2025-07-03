@@ -103,11 +103,22 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
               const hoaDonList = group.records;
               const batchId = group.batch_id;
               const batchTotal = hoaDonList.reduce((sum: number, h: HoaDon) => sum + parseInt(h.tong_so_tien), 0);
+              
+              // Lấy thông tin tổng hợp của batch
+              const uniqueCustomers = new Set(hoaDonList.map(h => h.ten_khach).filter(Boolean));
+              const uniquePhones = new Set(hoaDonList.map(h => h.so_dien_thoai).filter(Boolean));
+              const uniqueSenders = new Set(hoaDonList.map(h => h.nguoi_gui).filter(Boolean));
+              
               return (
                 <React.Fragment key={batchId}>
                   <tr className="bg-blue-50">
                     <td colSpan={fields.length + 2} className="px-2 py-2 font-semibold text-blue-800">
-                      Batch ID: {batchId} &nbsp;|&nbsp; Tổng hóa đơn: {hoaDonList.length} &nbsp;|&nbsp; Tổng kết toán: {formatCurrency(batchTotal)}
+                      Batch ID: {batchId} &nbsp;|&nbsp; 
+                      Tổng hóa đơn: {hoaDonList.length} &nbsp;|&nbsp; 
+                      Tổng kết toán: {formatCurrency(batchTotal)} &nbsp;|&nbsp;
+                      Khách: {Array.from(uniqueCustomers).join(', ')} &nbsp;|&nbsp;
+                      SĐT: {Array.from(uniquePhones).join(', ')} &nbsp;|&nbsp;
+                      Người gửi: {Array.from(uniqueSenders).join(', ')}
                     </td>
                   </tr>
                   {hoaDonList.map((hoaDon: HoaDon, idx: number) => (
