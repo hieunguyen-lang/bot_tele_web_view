@@ -84,8 +84,8 @@ const ReportDashboard: React.FC = () => {
       legend: { position: 'top' as const },
       title: { display: true, text: 'Báo cáo tổng hợp (dạng chứng khoán)' },
       zoom: {
-        pan: { enabled: true, mode: 'x' },
-        zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' }
+        pan: { enabled: true, mode: 'x' as const },
+        zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' as const }
       }
     },
     scales: {
