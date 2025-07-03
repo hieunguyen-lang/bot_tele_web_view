@@ -7,59 +7,50 @@ import {
   LinearScale,
   PointElement,
   LineElement,
-  BarElement,
   Title,
   Tooltip,
   Legend,
   ChartData,
   ChartOptions,
+  Filler
 } from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
+import zoomPlugin from 'chartjs-plugin-zoom';
+import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler,
+  zoomPlugin
 );
 
 interface ChartProps {
-  type: 'line' | 'bar';
-  data: ChartData<'line' | 'bar'>;
-  options?: ChartOptions<'line' | 'bar'>;
+  data: ChartData<'line'>;
+  options?: ChartOptions<'line'>;
   title?: string;
   className?: string;
 }
 
-const Chart = ({ type, data, options, title, className = '' }: ChartProps) => {
-  const defaultOptions: ChartOptions<'line' | 'bar'> = {
+const Chart = ({ data, options, title, className = '' }: ChartProps) => {
+  const defaultOptions: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: !!title,
-        text: title || '',
-      },
+      legend: { position: 'top' as const },
+      title: { display: !!title, text: title || '' },
+      zoom: {
+        pan: { enabled: true, mode: 'x' },
+        zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' }
+      }
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-      },
+      y: { beginAtZero: true },
+      x: {},
     },
   };
 
@@ -67,11 +58,7 @@ const Chart = ({ type, data, options, title, className = '' }: ChartProps) => {
 
   return (
     <div className={`card h-80 ${className}`}>
-      {type === 'line' ? (
-        <Line data={data as ChartData<'line', any, any>} options={mergedOptions} />
-      ) : (
-        <Bar data={data as ChartData<'bar', any, any>} options={mergedOptions} />
-      )}
+      <Line data={data} options={mergedOptions} />
     </div>
   );
 };
