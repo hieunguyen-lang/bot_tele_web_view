@@ -39,10 +39,10 @@ const fields: { key: keyof HoaDon; label: string; type?: string }[] = [
   { key: 'ck_vao', label: 'CK vào'},
   { key: 'stk_khach', label: 'STK KHÁCH' },
   { key: 'stk_cty', label: 'STK CÔNG TY' },
-  { key: 'tinh_trang', label: 'TÌNH TRẠNG' },
   { key: 'dia_chi', label: 'ĐỊA CHỈ' },
   { key: 'caption_goc', label: 'NOTE GỐC' },
   { key: 'ly_do', label: 'LÝ DO' },   
+  { key: 'tinh_trang', label: 'TÌNH TRẠNG' },
 ];
 
 const HoaDonDashboard: React.FC = () => {

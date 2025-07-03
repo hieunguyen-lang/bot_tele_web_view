@@ -139,7 +139,10 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
                               const val = hoaDon[f.key];
                               if (typeof val === 'string' && val === '0') return '0%';
                               if (typeof val === 'number' && val === 0) return '0%';
-                              if (val) return (Number(val) * 100).toString().replace(/\.0+$/, '') + '%';
+                              if (val) {
+                                const percent = Number(val) * 100;
+                                return percent % 1 === 0 ? percent.toFixed(0) + '%' : percent.toFixed(1) + '%';
+                              }
                               return '';
                             })()
                           ) : f.key === 'tinh_trang' ? (
