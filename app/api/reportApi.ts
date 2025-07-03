@@ -6,7 +6,7 @@ const API_BASE_URL =
 const API_URL = `${API_BASE_URL}/report`;
 
 
-export async function getReportSummary(type: 'day'|'week'|'month'|'year', from: string, to: string, include?: string) {
+export async function getReportSummary(type: 'hour'|'day'|'week'|'month'|'year', from: string, to: string, include?: string) {
   let url = `${API_URL}/summary?type=${type}&from=${from}&to=${to}`;
   if (include) {
     url += `&include=${encodeURIComponent(include)}`;
