@@ -89,7 +89,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
       </div>
       <div className="overflow-x-auto bg-white rounded-lg shadow border w-full">
         <table className="min-w-[1800px] w-full divide-y divide-gray-200 text-xs md:text-sm">
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-100 sticky top-0 z-10">
             <tr>
               <th className="px-2 py-2">STT</th>
               {fields.filter(f => visibleFields.includes(f.key)).map(f => (
@@ -130,7 +130,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
                             hoaDon[f.key]
                               ? '**** ' + hoaDon[f.key].slice(-4)
                               : ''
-                          ) : f.key === 'tong_so_tien' || f.key === 'tien_phi' || f.key === 'phi_pos' || f.key === 'phi_thu_khach' || f.key === 'ck_khach_rut' || f.key === 'tien_ve_tk_cty' ? (
+                          ) : f.key === 'tong_so_tien' || f.key === 'tien_phi' || f.key === 'ck_ra' || f.key === 'ck_vao' ? (
                             <span className={f.key === 'tong_so_tien' ? 'text-green-700 font-semibold' : f.key === 'tien_phi' ? 'text-red-600' : ''}>
                               {hoaDon[f.key] ? formatCurrency(Number(hoaDon[f.key])) : ''}
                             </span>
@@ -217,7 +217,7 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
                       />
                       <span className="ml-2 text-sm text-gray-600">Đã xử lý</span>
                     </div>
-                  ) : f.key === 'tong_so_tien' || f.key === 'tien_phi' || f.key === 'phi_pos' || f.key === 'phi_thu_khach' || f.key === 'ck_khach_rut' || f.key === 'tien_ve_tk_cty' ? (
+                  ) : f.key === 'tong_so_tien' || f.key === 'tien_phi' || f.key === 'ck_ra' || f.key === 'ck_vao' ? (
                     <input
                       type="number"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

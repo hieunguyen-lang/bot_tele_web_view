@@ -92,15 +92,13 @@ export interface HoaDon {
   batch_id: string;
   caption_goc: string;
   ket_toan?: string;
-  phi_pos?: string;
-  phi_thu_khach?: string;
-  ck_khach_rut?: string;
-  tien_ve_tk_cty?: string;
+  ck_ra?: string;
+  ck_vao?: string;
+  stk_khach?: string;
+  stk_cty?: string;
   tinh_trang?: string;
-  lenh_treo?: string;
   ly_do?: string;
   dia_chi?: string;
-  stk_khach?: string;
   khach_moi?: boolean;
   phan_tram_phi?: string;
 }
