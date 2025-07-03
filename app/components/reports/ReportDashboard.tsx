@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
+const Chart = dynamic(() => import('../Chart'), { ssr: false });
 import { getReportSummary } from '../../api/reportApi';
-import Chart from '../Chart';
 
 const TYPE_OPTIONS = [
   { value: 'hour', label: 'Giờ' },
