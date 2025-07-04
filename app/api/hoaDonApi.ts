@@ -59,16 +59,24 @@ export async function deleteHoaDon(id: number): Promise<void> {
   if (!res.ok) throw new Error('Xóa hóa đơn thất bại');
 }
 
-export async function createHoaDon(data: Partial<HoaDon>): Promise<HoaDon> {
-  const res = await fetch(API_URL, {
+export const createHoaDon = async (hoaDonData: Partial<HoaDon>) => {
+  const response = await fetch(API_URL, {
     method: 'POST',
-    credentials: 'include', // ✅
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(hoaDonData),
   });
-  if (!res.ok) throw new Error('Tạo hóa đơn thất bại');
-  return res.json();
-}
+  if (!response.ok) {
+    if (response.status === 422) {
+      const errorData = await response.json();
+      throw { status: 422, detail: errorData.detail };
+    }
+    throw new Error('Tạo hóa đơn thất bại');
+  }
+  return response.json();
+};
 
 export const exportHoaDonExcel = async (queryParams?: string) => {
   const url = queryParams
