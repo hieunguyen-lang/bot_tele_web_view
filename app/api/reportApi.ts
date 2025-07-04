@@ -16,4 +16,13 @@ export async function getReportSummary(type: 'hour'|'day'|'week'|'month'|'year',
   });
   if (!res.ok) throw new Error('Lỗi lấy báo cáo');
   return res.json();
+}
+
+export async function getCommissionBySender(from: string, to: string) {
+  const url = `${API_URL}/commission-by-sender?from=${from}&to=${to}`;
+  const res = await fetch(url, {
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error('Lỗi lấy thống kê hoa hồng');
+  return res.json();
 } 

@@ -7,6 +7,8 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
@@ -15,13 +17,15 @@ import {
   Filler
 } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar, Pie } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
@@ -30,14 +34,15 @@ ChartJS.register(
 );
 
 interface ChartProps {
-  data: ChartData<'line'>;
-  options?: ChartOptions<'line'>;
+  data: ChartData<any>;
+  options?: ChartOptions<any>;
   title?: string;
   className?: string;
+  type?: 'line' | 'bar' | 'pie';
 }
 
-const Chart = ({ data, options, title, className = '' }: ChartProps) => {
-  const defaultOptions: ChartOptions<'line'> = {
+const Chart = ({ data, options, title, className = '', type = 'line' }: ChartProps) => {
+  const defaultOptions: ChartOptions<any> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -58,7 +63,9 @@ const Chart = ({ data, options, title, className = '' }: ChartProps) => {
 
   return (
     <div className={`card h-80 ${className}`}>
-      <Line data={data} options={mergedOptions} />
+      {type === 'bar' && <Bar data={data} options={mergedOptions} />}
+      {type === 'pie' && <Pie data={data} options={mergedOptions} />}
+      {type === 'line' && <Line data={data} options={mergedOptions} />}
     </div>
   );
 };

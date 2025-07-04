@@ -130,17 +130,6 @@ const HoaDonDashboard: React.FC = () => {
       const data = await getHoaDonList(params.toString());
       setHoaDonGroups(data.data);
       setTotalPages(Math.ceil(data.total / (pageSizeParam || pageSize)));
-      
-      // Chỉ cập nhật stats từ dữ liệu filter nếu có filter được áp dụng
-      const hasFilters = filterParams && Object.values(filterParams).some(value => value !== '');
-      if (hasFilters) {
-        setStats({
-          totalRecords: data.data.reduce((sum: number, g: HoaDonGroup) => sum + g.records.length, 0),
-          totalBatches: data.total,
-          totalAmount: data.data.reduce((sum: number, g: HoaDonGroup) => sum + g.records.reduce((s: number, h: any) => s + parseInt(h.tong_so_tien), 0), 0),
-          totalFee: data.data.reduce((sum: number, g: HoaDonGroup) => sum + g.records.reduce((s: number, h: any) => s + parseInt(h.tien_phi), 0), 0),
-        });
-      }
     } catch (e) {
       alert('Không thể tải dữ liệu hóa đơn!');
     } finally {

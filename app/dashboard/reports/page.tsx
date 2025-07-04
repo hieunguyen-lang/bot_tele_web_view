@@ -1,9 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
-import { FiUsers, FiActivity, FiBarChart2, FiDatabase, FiAlertCircle } from 'react-icons/fi';
-import { useEffect, useState, useCallback } from 'react';
+import { FiUsers, FiActivity, FiBarChart2, FiDatabase, FiAlertCircle, FiDollarSign } from 'react-icons/fi';
 import { apiService } from '../../utils/api';
 import { Stat, ChartData, TableCommentsData } from '../../types';
 import { faFacebook } from '@fortawesome/free-brands-svg-icons';
@@ -12,6 +11,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '../../context/AuthContext'
 import Select from "react-select";
 import ReportDashboard from '../../components/reports/ReportDashboard';
+import CommissionChart from '../../components/reports/CommissionChart';
 
 interface OptionType {
   value: number
@@ -50,9 +50,51 @@ const customStylesSelects = {
     }),
   };
 export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState('summary');
+
+  const tabs = [
+    {
+      id: 'summary',
+      label: 'Tổng quan',
+      icon: <FiBarChart2 className="w-4 h-4" />,
+      component: <ReportDashboard />
+    },
+    {
+      id: 'commission',
+      label: 'Hoa hồng',
+      icon: <FiDollarSign className="w-4 h-4" />,
+      component: <CommissionChart />
+    }
+  ];
+
   return (
     <DashboardLayout>
-      <ReportDashboard />
+      <div className="space-y-6">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        <div>
+          {tabs.find(tab => tab.id === activeTab)?.component}
+        </div>
+      </div>
     </DashboardLayout>
   );
 } 

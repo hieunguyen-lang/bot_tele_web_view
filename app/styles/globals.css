@@ -40,4 +40,13 @@ body {
 
 .pagination-button:disabled {
   @apply opacity-50 cursor-not-allowed;
+}
+
+/* Chart.js fix: ép canvas luôn fit container */
+.chartjs-render-monitor, canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  display: block;
 } 
