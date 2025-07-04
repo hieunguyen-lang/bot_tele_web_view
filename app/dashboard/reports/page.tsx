@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
-import { FiUsers, FiActivity, FiBarChart2, FiDatabase, FiAlertCircle, FiDollarSign } from 'react-icons/fi';
+import { FiUsers, FiActivity, FiBarChart2, FiDatabase, FiAlertCircle, FiDollarSign, FiCalendar } from 'react-icons/fi';
 import { apiService } from '../../utils/api';
 import { Stat, ChartData, TableCommentsData } from '../../types';
 import { faFacebook } from '@fortawesome/free-brands-svg-icons';
@@ -12,6 +12,7 @@ import { useAuth } from '../../context/AuthContext'
 import Select from "react-select";
 import ReportDashboard from '../../components/reports/ReportDashboard';
 import CommissionChart from '../../components/reports/CommissionChart';
+import CalendarView from '../../components/reports/CalendarView';
 
 interface OptionType {
   value: number
@@ -64,6 +65,12 @@ export default function Dashboard() {
       label: 'Hoa hồng',
       icon: <FiDollarSign className="w-4 h-4" />,
       component: <CommissionChart />
+    },
+    {
+      id: 'calendar',
+      label: 'Lịch kết toán',
+      icon: <FiCalendar className="w-4 h-4" />,
+      component: <CalendarView />
     }
   ];
 

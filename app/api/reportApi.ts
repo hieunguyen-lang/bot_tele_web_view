@@ -26,3 +26,10 @@ export async function getCommissionBySender(from: string, to: string) {
   if (!res.ok) throw new Error('Lỗi lấy thống kê hoa hồng');
   return res.json();
 } 
+
+export async function getHoaDonDenHanKetToan(from: string, to: string) {
+  const url = `${API_URL}/den-han-ket-toan?from=${from}&to=${to}`;
+  const res = await fetch(url, { credentials: 'include' });
+  if (!res.ok) throw new Error('Lỗi lấy hóa đơn đến hạn kết toán');
+  return res.json();
+}
