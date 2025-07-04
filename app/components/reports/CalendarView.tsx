@@ -20,6 +20,7 @@ interface HoaDon {
 const CalendarView: React.FC = () => {
   const [hoaDons, setHoaDons] = useState<HoaDon[]>([]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedSender, setSelectedSender] = useState<string | null>(null);
 
   useEffect(() => {
     // Lấy hóa đơn đến hạn kết toán trong tháng hiện tại
@@ -85,27 +86,43 @@ const CalendarView: React.FC = () => {
       {/* Table chi tiết hóa đơn khi chọn ngày */}
       {selectedDate && hoaDonByDate[selectedDate] && (
         <div className="mt-6">
-          <h3 className="font-bold mb-2">Danh sách hóa đơn đến hạn ngày {selectedDate}</h3>
-          <table className="min-w-full border">
-            <thead>
-              <tr>
-              <th className="border px-2 py-1">Thời gian giao dịch</th>
-                <th className="border px-2 py-1">Người gửi</th>
-                <th className="border px-2 py-1">Tên khách</th>
-                <th className="border px-2 py-1">Số Điện Thoại</th>
-              </tr> 
-            </thead>
-            <tbody>
-              {hoaDonByDate[selectedDate].map(hd => (
-                <tr key={hd.id}>
-                  <td className="border px-2 py-1">{hd.thoi_gian}</td>
-                  <td className="border px-2 py-1">{hd.nguoi_gui}</td>
-                  <td className="border px-2 py-1">{hd.ten_khach}</td>
-                  <td className="border px-2 py-1">{hd.so_dien_thoai?.toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <h3 className="font-bold mb-2">Danh sách người gửi có hóa đơn đến hạn ngày {selectedDate}</h3>
+          <ul className="mb-4">
+            {Array.from(new Set(hoaDonByDate[selectedDate].map(hd => hd.nguoi_gui || 'Không rõ'))).map(sender => (
+              <li key={sender}>
+                <button
+                  className={`text-blue-600 hover:underline ${selectedSender === sender ? 'font-bold' : ''}`}
+                  onClick={() => setSelectedSender(sender)}
+                >
+                  {sender}
+                </button>
+              </li>
+            ))}
+          </ul>
+          {/* Hiện danh sách hóa đơn của người gửi đã chọn */}
+          {selectedSender && (
+            <>
+              <h4 className="font-semibold mb-2">Hóa đơn của {selectedSender} ngày {selectedDate}</h4>
+              <table className="min-w-full border">
+                <thead>
+                  <tr>
+                    <th className="border px-2 py-1">Thời gian giao dịch</th>
+                    <th className="border px-2 py-1">Tên khách</th>
+                    <th className="border px-2 py-1">Số Điện Thoại</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {hoaDonByDate[selectedDate].filter(hd => (hd.nguoi_gui || 'Không rõ') === selectedSender).map(hd => (
+                    <tr key={hd.id}>
+                      <td className="border px-2 py-1">{hd.thoi_gian}</td>
+                      <td className="border px-2 py-1">{hd.ten_khach}</td>
+                      <td className="border px-2 py-1">{hd.so_dien_thoai?.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
       )}
     </div>

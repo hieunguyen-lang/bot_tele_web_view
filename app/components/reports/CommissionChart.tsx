@@ -149,8 +149,8 @@ const CommissionChart: React.FC = () => {
     //     categoryPercentage: 0.7,
     //   },
       {
-        label: 'Tổng hoa hồng (2% tổng phí)',
-        data: topData.map((d) => d.total_fee ? d.total_fee * 0.02 : 0),
+        label: 'Tổng hoa hồng (0.0002 Tổng tiền)',
+        data: topData.map((d) => d.total_amount ? d.total_amount * 0.0002 : 0),
         backgroundColor: 'rgba(16, 185, 129, 0.8)',
         borderColor: 'rgba(16, 185, 129, 1)',
         borderWidth: 1,
@@ -338,16 +338,10 @@ const CommissionChart: React.FC = () => {
                     Người gửi
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                    Tổng hoa hồng
-                  </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
                     Số giao dịch
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
                     Tổng tiền
-                  </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                    Tổng phí
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
                     Hoa hồng cuối cùng (2% phí)
@@ -356,14 +350,11 @@ const CommissionChart: React.FC = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {data.map((item, index) => {
-                  const hoaHongCuoiCung = item.total_fee ? item.total_fee * 0.02 : 0;
+                  const hoaHongCuoiCung = item.total_amount ? item.total_amount * 0.0002 : 0;
                   return (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
                         {item.nguoi_gui}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {new Intl.NumberFormat('vi-VN').format(item.total_commission)} VNĐ
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
                         {item.total_transactions}
@@ -372,10 +363,7 @@ const CommissionChart: React.FC = () => {
                         {new Intl.NumberFormat('vi-VN').format(item.total_amount)} VNĐ
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {item.total_fee !== undefined ? new Intl.NumberFormat('vi-VN').format(item.total_fee) + ' VNĐ' : '-'}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                        {item.total_fee !== undefined ? new Intl.NumberFormat('vi-VN').format(hoaHongCuoiCung) + ' VNĐ' : '-'}
+                        {item.total_amount !== undefined ? new Intl.NumberFormat('vi-VN').format(hoaHongCuoiCung) + ' VNĐ' : '-'}
                       </td>
                     </tr>
                   );
