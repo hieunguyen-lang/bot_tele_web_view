@@ -13,6 +13,7 @@ interface HoaDon {
   ten_khach?: string;
   so_dien_thoai?: string;
   batch_id?: string;
+  thoi_gian?: string;
   // ... các trường khác nếu cần
 }
 
@@ -58,7 +59,7 @@ const CalendarView: React.FC = () => {
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-bold mb-4">Lịch các hóa đơn đến hạn kết toán</h2>
+      <h2 className="text-xl font-bold mb-4">Lịch các hóa đơn đến hạn đáo hạn</h2>
       <div className="w-full max-w-5xl mx-auto">
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
@@ -82,6 +83,7 @@ const CalendarView: React.FC = () => {
           <table className="min-w-full border">
             <thead>
               <tr>
+              <th className="border px-2 py-1">Thời gian giao dịch</th>
                 <th className="border px-2 py-1">Người gửi</th>
                 <th className="border px-2 py-1">Tên khách</th>
                 <th className="border px-2 py-1">Số Điện Thoại</th>
@@ -90,6 +92,7 @@ const CalendarView: React.FC = () => {
             <tbody>
               {hoaDonByDate[selectedDate].map(hd => (
                 <tr key={hd.id}>
+                  <td className="border px-2 py-1">{hd.thoi_gian}</td>
                   <td className="border px-2 py-1">{hd.nguoi_gui}</td>
                   <td className="border px-2 py-1">{hd.ten_khach}</td>
                   <td className="border px-2 py-1">{hd.so_dien_thoai?.toLocaleString()}</td>

@@ -4,6 +4,9 @@ const Chart = dynamic(() => import('../Chart'), { ssr: false });
 import { getReportSummary } from '../../api/reportApi';
 import StatsCard from '../hoa-don/StatsCard';
 import { Users, FolderOpen, DollarSign, CreditCard } from 'lucide-react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { vi } from 'date-fns/locale';
 
 const TYPE_OPTIONS = [
   { value: 'hour', label: 'Giờ' },
@@ -13,8 +16,22 @@ const TYPE_OPTIONS = [
   { value: 'year', label: 'Năm' },
 ];
 
-const today = new Date().toISOString().slice(0, 10);
-const lastMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+// Helper chuyển string yyyy-MM-dd sang Date object
+const parseDate = (str: string) => {
+  const [year, month, day] = str.split('-').map(Number);
+  return new Date(year, month - 1, day);
+};
+
+// Helper chuyển Date object sang yyyy-MM-dd
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const today = formatDate(new Date());
+const lastMonth = formatDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
 
 const ReportDashboard: React.FC = () => {
   const [type, setType] = useState<'hour'|'day'|'week'|'month'|'year'>('day');
@@ -311,20 +328,27 @@ const ReportDashboard: React.FC = () => {
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Từ ngày</label>
-          <input
-            type="date"
+          <DatePicker
+            selected={from ? parseDate(from) : null}
+            onChange={date => date && setFrom(formatDate(date))}
+            dateFormat="dd/MM/yyyy"
+            locale={vi}
             className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={from}
-            onChange={e => setFrom(e.target.value)}
+            maxDate={to ? parseDate(to) : undefined}
+            placeholderText="Chọn ngày bắt đầu"
           />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Đến ngày</label>
-          <input
-            type="date"
+          <DatePicker
+            selected={to ? parseDate(to) : null}
+            onChange={date => date && setTo(formatDate(date))}
+            dateFormat="dd/MM/yyyy"
+            locale={vi}
             className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={to}
-            onChange={e => setTo(e.target.value)}
+            minDate={from ? parseDate(from) : undefined}
+            maxDate={new Date()}
+            placeholderText="Chọn ngày kết thúc"
           />
         </div>
         <button

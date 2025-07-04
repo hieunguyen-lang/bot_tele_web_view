@@ -3,6 +3,9 @@ import { HoaDon, HoaDonGroup } from '../../types/index';
 import { formatCurrency } from '../../utils/groupRecords';
 import { updateHoaDon, deleteHoaDon } from '../../api/hoaDonApi';
 import { UserPlus, X } from 'lucide-react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { vi } from 'date-fns/locale';
 
 interface HoaDonTableProps {
   hoaDonGroups: HoaDonGroup[];
@@ -63,6 +66,18 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
     } catch (e) {
       alert('Xóa thất bại!');
     }
+  };
+
+  const parseDate = (str: string) => {
+    const [year, month, day] = str.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -230,12 +245,12 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
                       placeholder={`Nhập ${f.label.toLowerCase()}`}
                     />
                   ) : f.key === 'ngay_giao_dich' ? (
-                    <input
-                      type="date"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      value={editData[f.key] ?? ''}
-                      onChange={e => handleChange(f.key, e.target.value)}
-                      disabled={loading}
+                    <DatePicker
+                      selected={parseDate(editData[f.key] ?? '')}
+                      onChange={date => date && handleChange(f.key, formatDate(date))}
+                      dateFormat="dd/MM/yyyy"
+                      locale={vi}
+                      className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : f.key === 'caption_goc' || f.key === 'ly_do' ? (
                     <textarea

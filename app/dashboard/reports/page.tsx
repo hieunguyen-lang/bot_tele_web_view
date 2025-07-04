@@ -68,7 +68,7 @@ export default function Dashboard() {
     },
     {
       id: 'calendar',
-      label: 'Lịch kết toán',
+      label: 'Lịch đáo hạn',
       icon: <FiCalendar className="w-4 h-4" />,
       component: <CalendarView />
     }

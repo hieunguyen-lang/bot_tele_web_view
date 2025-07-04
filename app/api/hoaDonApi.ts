@@ -39,6 +39,17 @@ export const getHoaDonStats = async () => {
   return response.json();
 };
 
+export const getHoaDonStatsByFilter = async (queryParams?: string) => {
+  const url = queryParams
+    ? `${API_URL}/stats-hoadon?${queryParams}`
+    : `${API_URL}/stats-hoadon`;
+  const response = await fetch(url, {
+    credentials: 'include',
+  });
+  if (!response.ok) throw new Error('Lấy thống kê hóa đơn theo filter thất bại');
+  return response.json();
+};
+
 export async function updateHoaDon(id: number, data: Partial<HoaDon>): Promise<HoaDon> {
   const res = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',

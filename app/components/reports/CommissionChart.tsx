@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 const Chart = dynamic(() => import('../Chart'), { ssr: false });
 import { getCommissionBySender } from '../../api/reportApi';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { vi } from 'date-fns/locale';
 
 interface CommissionData {
   nguoi_gui: string;
@@ -246,6 +249,19 @@ const CommissionChart: React.FC = () => {
     },
   };
 
+  // Helper chuyển string yyyy-MM-dd sang Date object
+  const parseDate = (str: string) => {
+    const [year, month, day] = str.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+  // Helper chuyển Date object sang yyyy-MM-dd
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex flex-wrap gap-4 mb-6 items-end">
@@ -262,7 +278,7 @@ const CommissionChart: React.FC = () => {
             }}
             defaultValue=""
           >
-            <option value="" disabled>Tùy chọn nhanh</option>
+            <option value="" disabled>Chọn nhanh</option>
             {timeRangeOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -273,20 +289,27 @@ const CommissionChart: React.FC = () => {
 
         <div>
           <label className="block text-sm font-medium mb-1">Từ ngày</label>
-          <input
-            type="date"
+          <DatePicker
+            selected={parseDate(from)}
+            onChange={date => date && setFrom(formatDate(date))}
+            dateFormat="dd/MM/yyyy"
+            locale={vi}
             className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={from}
-            onChange={e => setFrom(e.target.value)}
+            maxDate={parseDate(to)}
+            placeholderText="Chọn ngày bắt đầu"
           />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Đến ngày</label>
-          <input
-            type="date"
+          <DatePicker
+            selected={parseDate(to)}
+            onChange={date => date && setTo(formatDate(date))}
+            dateFormat="dd/MM/yyyy"
+            locale={vi}
             className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={to}
-            onChange={e => setTo(e.target.value)}
+            minDate={parseDate(from)}
+            maxDate={new Date()}
+            placeholderText="Chọn ngày kết thúc"
           />
         </div>
         <button

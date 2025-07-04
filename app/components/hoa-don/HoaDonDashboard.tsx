@@ -3,7 +3,10 @@ import { Users, FolderOpen, DollarSign, CreditCard, X, Plus } from 'lucide-react
 import { HoaDonGroup, HoaDon } from '../../types/index';
 import StatsCard from './StatsCard';
 import HoaDonTable from './HoaDonTable';
-import { getHoaDonList, getHoaDonStats, exportHoaDonExcel, createHoaDon } from '../../api/hoaDonApi';
+import { getHoaDonList, getHoaDonStats, exportHoaDonExcel, createHoaDon, getHoaDonStatsByFilter } from '../../api/hoaDonApi';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { vi } from 'date-fns/locale';
 
 interface Filters {
   so_hoa_don: string;
@@ -72,6 +75,18 @@ const fieldPlaceholderMap: Record<string, string> = {
   phan_tram_phi: '0.02',
 };
 
+const parseDate = (str: string) => {
+  const [year, month, day] = str.split('-').map(Number);
+  return new Date(year, month - 1, day);
+};
+
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const HoaDonDashboard: React.FC = () => {
   const [hoaDonGroups, setHoaDonGroups] = useState<HoaDonGroup[]>([]);
   const [stats, setStats] = useState({ totalRecords: 0, totalBatches: 0, totalAmount: 0, totalFee: 0 });
@@ -106,10 +121,18 @@ const HoaDonDashboard: React.FC = () => {
   // Map field key sang label tiếng Việt
   const fieldLabelMap: Record<string, string> = Object.fromEntries(fields.map(f => [f.key, f.label]));
 
-  // Function để lấy thống kê tổng hợp
-  const loadStats = async () => {
+  const buildQueryParams = (filters: Filters) => {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) params.append(key, value);
+    });
+    return params.toString();
+  };
+
+  const loadStats = async (filters: Filters) => {
     try {
-      const statsData = await getHoaDonStats();
+      const queryParams = buildQueryParams(filters);
+      const statsData = await getHoaDonStatsByFilter(queryParams);
       setStats(statsData);
     } catch (error) {
       console.error('Không thể tải thống kê:', error);
@@ -138,13 +161,7 @@ const HoaDonDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    // Load thống kê tổng hợp khi component mount
-    loadStats();
-    reloadData(filters, page, pageSize);
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
+    loadStats(filters);
     reloadData(filters, page, pageSize);
     // eslint-disable-next-line
   }, [filters, page, pageSize]);
@@ -155,7 +172,7 @@ const HoaDonDashboard: React.FC = () => {
   };
 
   const clearFilters = () => {
-    setFilters({
+    const emptyFilters = {
       so_hoa_don: '',
       so_lo: '',
       tid: '',
@@ -164,10 +181,10 @@ const HoaDonDashboard: React.FC = () => {
       ten_khach: '',
       so_dien_thoai: '',
       ngay_giao_dich: ''
-    });
+    };
+    setFilters(emptyFilters);
     setPage(1);
-    // Load lại thống kê tổng hợp khi clear filter
-    loadStats();
+    loadStats(emptyFilters);
   };
 
   const handleExportExcel = async () => {
@@ -374,11 +391,12 @@ const HoaDonDashboard: React.FC = () => {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Ngày giao dịch</label>
-              <input
-                type="date"
-                value={filters.ngay_giao_dich}
-                onChange={(e) => handleFilterChange('ngay_giao_dich', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              <DatePicker
+                selected={filters.ngay_giao_dich ? parseDate(filters.ngay_giao_dich) : null}
+                onChange={date => date && handleFilterChange('ngay_giao_dich', formatDate(date))}
+                dateFormat="dd/MM/yyyy"
+                locale={vi}
+                className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -515,12 +533,12 @@ const HoaDonDashboard: React.FC = () => {
                         placeholder={fieldPlaceholderMap[f.key as string] || `Nhập ${f.label.toLowerCase()}`}
                       />
                     ) : f.key === 'ngay_giao_dich' ? (
-                      <input
-                        type="date"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={createData[f.key] ?? ''}
-                        onChange={e => handleCreateChange(f.key, e.target.value)}
-                        disabled={createLoading}
+                      <DatePicker
+                        selected={createData[f.key] ? parseDate(createData[f.key] as string) : null}
+                        onChange={date => date && handleCreateChange(f.key, formatDate(date))}
+                        dateFormat="dd/MM/yyyy"
+                        locale={vi}
+                        className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     ) : f.key === 'caption_goc' || f.key === 'ly_do' ? (
                       <textarea
