@@ -57,6 +57,11 @@ const CalendarView: React.FC = () => {
     setSelectedDate(arg.dateStr); // yyyy-mm-dd
   };
 
+  // Xử lý click vào event (label số hóa đơn)
+  const handleEventClick = (arg: any) => {
+    setSelectedDate(arg.event.startStr.slice(0, 10)); // yyyy-mm-dd
+  };
+
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-bold mb-4">Lịch các hóa đơn đến hạn đáo hạn</h2>
@@ -68,6 +73,7 @@ const CalendarView: React.FC = () => {
           height={650}
           events={events}
           dateClick={handleDateClick}
+          eventClick={handleEventClick}
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
