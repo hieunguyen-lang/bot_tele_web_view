@@ -344,7 +344,7 @@ const CommissionChart: React.FC = () => {
                     Tổng tiền
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                    Hoa hồng cuối cùng (2% phí)
+                    Hoa hồng cuối cùng (0.0002 phí)
                   </th>
                 </tr>
               </thead>

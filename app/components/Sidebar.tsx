@@ -19,7 +19,12 @@ import {
 } from 'react-icons/fi';
 import apiService from '../utils/api';
 
-const Sidebar = () => {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
   const pathname = usePathname();
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
@@ -55,7 +60,19 @@ const Sidebar = () => {
   //   }
   // }, [pathname]);
   return (
-    <aside className="h-screen bg-white w-64 border-r border-gray-200 hidden md:block">
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-gray-600 bg-opacity-75 z-40 md:hidden"
+          onClick={onClose}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
       <div className="h-full flex flex-col justify-between">
         <div className="p-4">
           <div className="py-4 border-b border-gray-200">
@@ -121,7 +138,8 @@ const Sidebar = () => {
           </nav>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 

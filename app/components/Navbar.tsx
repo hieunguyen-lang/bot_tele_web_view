@@ -3,12 +3,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
-import { FiHome, FiPieChart, FiUser, FiInfo, FiSettings } from 'react-icons/fi';
+import { FiHome, FiPieChart, FiUser, FiInfo, FiSettings, FiMenu } from 'react-icons/fi';
 import { useState,useEffect } from 'react';
 import { apiService } from '../utils/api';
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../context/AuthContext'
-const Navbar = () => {
+interface NavbarProps {
+  onMenuClick?: () => void;
+}
+
+const Navbar = ({ onMenuClick }: NavbarProps) => {
   const pathname = usePathname();
   const router = useRouter()
   
@@ -28,7 +32,13 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-xl font-bold text-primary">
+              <button
+                onClick={onMenuClick}
+                className="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent1"
+              >
+                <FiMenu className="h-6 w-6" />
+              </button>
+              <Link href="/" className="text-xl font-bold text-primary ml-2 md:ml-0">
               Bill<span className="text-accent1">Manager</span>
               </Link>
             </div>
@@ -63,6 +73,20 @@ const Navbar = () => {
               Sign up
             </Link>
             </>
+            )}
+          </div>
+          
+          {/* Mobile login buttons */}
+          <div className="sm:hidden flex items-center space-x-2">
+            {!isLoggedIn && (
+              <>
+                <Link href="/login" className="btn-primary text-sm px-3 py-1">
+                  Login
+                </Link>
+                <Link href="/register" className="btn-primary text-sm px-3 py-1">
+                  Sign up
+                </Link>
+              </>
             )}
           </div>
           
