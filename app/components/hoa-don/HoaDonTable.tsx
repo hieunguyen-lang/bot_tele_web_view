@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { HoaDon, HoaDonGroup } from '../../types/index';
 import { formatCurrency } from '../../utils/groupRecords';
 import { updateHoaDon, deleteHoaDon } from '../../api/hoaDonApi';
-import { UserPlus, X } from 'lucide-react';
+import { Star, X } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { vi } from 'date-fns/locale';
@@ -134,6 +134,12 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
                       Khách: {Array.from(uniqueCustomers).join(', ')} &nbsp;|&nbsp;
                       SĐT: {Array.from(uniquePhones).join(', ')} &nbsp;|&nbsp;
                       Người gửi: {Array.from(uniqueSenders).join(', ')}
+                      {hoaDonList.some(h => h.khach_moi) && (
+                        <span className="ml-2">
+                          <Star className="w-4 h-4 text-emerald-500 inline" />
+                          <span className="text-emerald-600 ml-1">Khách mới</span>
+                        </span>
+                      )}
                     </td>
                   </tr>
                   {hoaDonList.map((hoaDon: HoaDon, idx: number) => (
@@ -170,9 +176,8 @@ const HoaDonTable: React.FC<HoaDonTableProps> = ({ hoaDonGroups, onReload, field
                               />
                             </div>
                           ) : f.key === 'ten_khach' ? (
-                            <span className="flex items-center gap-1">
+                            <span>
                               {hoaDon[f.key] ?? ''}
-                              {hoaDon.khach_moi && <UserPlus className="w-4 h-4 text-emerald-500" />}
                             </span>
                           ) : (
                             hoaDon[f.key] ?? ''
