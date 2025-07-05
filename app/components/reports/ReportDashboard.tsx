@@ -40,7 +40,7 @@ const ReportDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [stats, setStats] = useState({ totalRecords: 0, totalBatches: 0, totalAmount: 0, totalFee: 0 });
+  const [stats, setStats] = useState({ totalRecords: 0, totalBatches: 0, totalAmount: 0, totalFee: 0,totalNewCustomers: 0 });
 
   // Các option mặc định cho khoảng thời gian
   const timeRangeOptions = [
@@ -142,14 +142,15 @@ const ReportDashboard: React.FC = () => {
   const fetchStats = async () => {
     try {
       const res = await getReportSummary(type, from, to);
-      let totalRecords = 0, totalBatches = 0, totalAmount = 0, totalFee = 0;
+      let totalRecords = 0, totalBatches = 0, totalAmount = 0, totalFee = 0,totalNewCustomers = 0;
       res.forEach((item: any) => {
         totalRecords += item.total_invoices || 0;
         totalBatches += item.total_batches || 0;
         totalAmount += item.total_amount || 0;
         totalFee += item.total_fee || 0;
+        totalNewCustomers += item.total_new_customers || 0;
       });
-      setStats({ totalRecords, totalBatches, totalAmount, totalFee });
+      setStats({ totalRecords, totalBatches, totalAmount, totalFee,totalNewCustomers });
     } catch (e) {
       // Nếu lỗi thì giữ nguyên stats cũ
     }
@@ -202,6 +203,23 @@ const ReportDashboard: React.FC = () => {
         shadowOffsetY: 2,
         shadowBlur: 6,
         shadowColor: 'rgba(239,68,68,0.2)'
+      },
+      {
+        label: 'Khách mới',
+        data: data.map((d) => d.total_new_customers || 0),
+        borderColor: 'rgba(147, 51, 234, 1)',
+        backgroundColor: 'rgba(147, 51, 234, 0.15)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointBackgroundColor: 'rgba(147, 51, 234, 1)',
+        borderWidth: 3,
+        pointBorderWidth: 2,
+        pointHoverRadius: 6,
+        shadowOffsetX: 0,
+        shadowOffsetY: 2,
+        shadowBlur: 6,
+        shadowColor: 'rgba(147,51,234,0.2)'
       }
     ],
   };
@@ -374,6 +392,13 @@ const ReportDashboard: React.FC = () => {
           color="border-green-500"
         />
         <StatsCard
+          title="Khách mới"
+          value={stats.totalNewCustomers}
+          icon={<Users className="w-8 h-8" />}
+          color="border-purple-500"
+          isCurrency={false}
+        />
+        <StatsCard
           title="Tổng Tiền"
           value={stats.totalAmount}
           icon={<DollarSign className="w-8 h-8" />}
@@ -417,11 +442,12 @@ const ReportDashboard: React.FC = () => {
         </div>
       )}
       {error && <div className="text-red-600 mb-2">{error}</div>}
-      <div className="h-96">
-        <Chart data={chartData} options={chartOptions} />
+      <div className="h-[700px]">
+        <Chart data={chartData} options={chartOptions} height="h-full" />
+
       </div>
     </div>
   );
 };
 
-export default ReportDashboard; 
+export default ReportDashboard;

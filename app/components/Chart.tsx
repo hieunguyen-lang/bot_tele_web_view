@@ -39,9 +39,10 @@ interface ChartProps {
   title?: string;
   className?: string;
   type?: 'line' | 'bar' | 'pie';
+  height?: string;
 }
 
-const Chart = ({ data, options, title, className = '', type = 'line' }: ChartProps) => {
+const Chart = ({ data, options, title, className = '', type = 'line', height = 'h-80' }: ChartProps) => {
   const defaultOptions: ChartOptions<any> = {
     responsive: true,
     maintainAspectRatio: false,
@@ -62,7 +63,7 @@ const Chart = ({ data, options, title, className = '', type = 'line' }: ChartPro
   const mergedOptions = { ...defaultOptions, ...options };
 
   return (
-    <div className={`card h-80 ${className}`}>
+    <div className={`card ${height} ${className}`}>
       {type === 'bar' && <Bar data={data} options={mergedOptions} />}
       {type === 'pie' && <Pie data={data} options={mergedOptions} />}
       {type === 'line' && <Line data={data} options={mergedOptions} />}
